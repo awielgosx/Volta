@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>VOLTA — Gen Z Mobility</title>
+    <meta name="description" content="VOLTA Gen Z Exclusive — car rental for young drivers, partner loyalty programs and a self-service client panel with 3D damage reporting.">
+    <meta name="theme-color" content="#0a0a0a">
+    <script>document.documentElement.classList.add('js');</script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { DEFAULT: '#ff5f00', 600: '#e65600', 400: '#ff7a26' },
+                        ink:   { DEFAULT: '#0a0a0a', 2: '#111113', 3: '#18181b' },
+                        sand:  { DEFAULT: '#fff6ec', 2: '#ffeedc' }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        display: ['"Bricolage Grotesque"', 'Inter', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --brand: #ff5f00; --brand-400: #ff7a26; --brand-600: #e65600;
+            --ink: #0a0a0a; --ink-2: #111113; --ink-3: #18181b;
+            --sand: #fff6ec; --line: rgba(255,255,255,0.08);
+            --ease: cubic-bezier(.2,.8,.2,1);
+            --ring: 0 0 0 4px rgba(255,95,0,0.22);
+        }
+        html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--ink); color: #fff; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+        ::selection { background: var(--brand); color: #000; }
+        .font-display { font-family: 'Bricolage Grotesque', 'Inter', sans-serif; letter-spacing: -0.035em; }
+        .brand { color: var(--brand); }
+        .wrap { width: 100%; max-width: 80rem; margin-inline: auto; padding-inline: 1.25rem; }
+        @media (min-width: 768px) { .wrap { padding-inline: 2rem; } }
+        [id] { scroll-margin-top: 110px; }
+
+        :focus { outline: none; }
+        :focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; border-radius: 10px; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+        .skip-link { position: fixed; left: 1rem; top: -4rem; z-index: 200; background: var(--brand); color: #000; font-weight: 700; padding: .75rem 1rem; border-radius: 12px; transition: top .2s; }
+        .skip-link:focus { top: 1rem; }
+
+        /* ---------- Light (summer) zone: black text, orange highlighter ---------- */
+        .on-light { background: var(--sand); color: var(--ink); }
+        .on-light .brand {
+            color: inherit; padding: 0 .06em;
+            background: linear-gradient(transparent 60%, var(--brand) 60%, var(--brand) 92%, transparent 92%);
+            -webkit-box-decoration-break: clone; box-decoration-break: clone;
+        }
+        .on-light .on-dark .brand { color: var(--brand); background: none; padding: 0; }
+        .field-light option { background: #fff; color: #0a0a0a; }
+
+        /* ---------- Buttons ---------- */
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: .6rem; min-height: 48px; padding: 0 1.5rem; border-radius: 999px; font-weight: 700; font-size: 15px; line-height: 1; white-space: nowrap; cursor: pointer; transition: transform .25s var(--ease), background-color .2s, color .2s, box-shadow .25s, border-color .2s; }
+        .btn:active { transform: scale(.97); }
+        .btn-lg { min-height: 56px; padding: 0 2rem; font-size: 16px; }
+        .btn-sm { min-height: 40px; padding: 0 1.1rem; font-size: 14px; }
+        .btn-primary { background: var(--brand); color: #0a0a0a; }
+        .btn-primary:hover { background: var(--brand-400); transform: translateY(-2px); box-shadow: 0 14px 30px -12px rgba(255,95,0,.75); }
+        .btn-ghost { background: rgba(255,255,255,.07); color: #fff; border: 1px solid rgba(255,255,255,.14); }
+        .btn-ghost:hover { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.24); }
+        .btn-dark { background: var(--ink); color: #fff; }
+        .btn-dark:hover { background: #26262a; transform: translateY(-2px); }
+        .btn-light { background: #fff; color: var(--ink); }
+        .btn-light:hover { background: var(--brand); color: #0a0a0a; transform: translateY(-2px); }
+        .icon-btn { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 999px; transition: background-color .2s, color .2s, transform .2s; }
+
+        /* ---------- Nav ---------- */
+        .nav-link { position: relative; padding: .6rem 1rem; border-radius: 999px; font-size: 14px; font-weight: 600; color: #d4d4d8; transition: color .2s, background-color .2s; }
+        .nav-link:hover { color: #fff; background: rgba(255,255,255,.08); }
+        .nav-link.is-active { color: #0a0a0a; background: #fff; }
+        .lang-toggle { display: inline-flex; padding: 3px; border-radius: 999px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.1); }
+        .lang-btn { min-width: 36px; height: 30px; border-radius: 999px; font-size: 12px; font-weight: 800; color: #a1a1aa; transition: color .2s, background-color .2s; }
+        .lang-btn:hover { color: #fff; }
+        .lang-btn.active { background: var(--brand); color: #0a0a0a; }
+
+        /* ---------- Hero ---------- */
+        .hero-gradient {
+            background:
+                linear-gradient(90deg, rgba(10,10,10,.78) 0%, rgba(10,10,10,.35) 55%, rgba(10,10,10,.05) 100%),
+                linear-gradient(180deg, rgba(10,10,10,.55) 0%, rgba(10,10,10,0) 28%, rgba(10,10,10,.15) 62%, rgba(10,10,10,.85) 100%),
+                url('https://images.unsplash.com/photo-1523301343968-6a6ebf63c672?q=80&w=2400&auto=format&fit=crop');
+            background-size: cover; background-position: center 40%;
+        }
+        .hero-glow { background: radial-gradient(60% 50% at 80% 10%, rgba(255,140,40,.35), transparent 70%); mix-blend-mode: screen; }
+        .spin { animation: spin 18s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .float { animation: float 6s ease-in-out infinite; }
+        @keyframes float { 50% { transform: translateY(-10px) rotate(var(--r, 0deg)); } }
+
+        /* ---------- Marquee ---------- */
+        .marquee { overflow: hidden; }
+        .marquee-track { display: flex; width: max-content; animation: marquee 38s linear infinite; }
+        .marquee:hover .marquee-track { animation-play-state: paused; }
+        @keyframes marquee { to { transform: translateX(-50%); } }
+
+        /* ---------- Cards ---------- */
+        .glass-card { background: rgba(255,255,255,.035); border: 1px solid var(--line); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+        .panel-card { background: var(--ink-2); border: 1px solid var(--line); border-radius: 28px; }
+        .car-card { transition: transform .45s var(--ease), box-shadow .45s var(--ease); animation: cardIn .6s var(--ease) both; }
+        .car-card:hover { transform: translateY(-6px); box-shadow: 0 30px 60px -30px rgba(0,0,0,.55); }
+        .car-card:hover .car-image { transform: scale(1.06); }
+        .car-image { transition: transform .8s var(--ease); }
+        @keyframes cardIn { from { opacity: 0; transform: translateY(18px); } }
+
+        .page-section { display: none; }
+        .page-section.active { display: block; animation: pageIn .45s var(--ease); }
+        @keyframes pageIn { from { opacity: 0; transform: translateY(8px); } }
+
+        .js .reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+        .js .reveal.in { opacity: 1; transform: none; }
+
+        .loyalty-tile { position: relative; overflow: hidden; border-radius: 28px; isolation: isolate; transition: transform .5s var(--ease); }
+        .loyalty-tile img { transition: transform 1s var(--ease); }
+        .loyalty-tile:hover img { transform: scale(1.06); }
+        .loyalty-tile:hover { transform: translateY(-6px); }
+        .loyalty-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: 1.75rem; background: linear-gradient(to top, rgba(10,10,10,.96) 18%, rgba(10,10,10,.55) 55%, rgba(10,10,10,.05)); }
+
+        /* ---------- Form controls ---------- */
+        .label { display: block; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #a1a1aa; margin-bottom: .5rem; }
+        .field { width: 100%; min-height: 52px; border-radius: 14px; padding: 0 1rem; font-size: 15px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); color: #fff; transition: border-color .2s, box-shadow .2s, background-color .2s; }
+        .field::placeholder { color: #71717a; }
+        .field:hover { border-color: rgba(255,255,255,.22); }
+        .field:focus { border-color: var(--brand); box-shadow: var(--ring); outline: none; }
+        textarea.field { padding: .9rem 1rem; line-height: 1.5; }
+        .field-light { background: #f5f1ec; border-color: #e8e1d8; color: var(--ink); }
+        .field-light::placeholder { color: #8a8178; }
+        .field-light:hover { border-color: #d6ccc0; }
+        select.field { appearance: none; -webkit-appearance: none; padding-right: 2.75rem; cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a1a1aa' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 1.1rem center; }
+        select.field option { background: #18181b; color: #fff; }
+        input[type=number]::-webkit-inner-spin-button { opacity: .4; }
+        input[type=checkbox], input[type=radio] { accent-color: var(--brand); width: 18px; height: 18px; cursor: pointer; flex-shrink: 0; }
+
+        /* Segmented control — also restyles the 3D viewer's type buttons (their JS sets bg-brand / bg-zinc-800 classes) */
+        .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; padding: 4px; border-radius: 16px; background: rgba(255,255,255,.05); border: 1px solid var(--line); }
+        .seg > button { min-height: 44px; padding: 0 .75rem; border-radius: 12px; font-size: 14px; font-weight: 600; text-transform: none; box-shadow: none; color: #a1a1aa; background: transparent; transition: background-color .25s, color .25s; }
+        .seg > button:not(.bg-brand):hover { background: rgba(255,255,255,.07); color: #fff; }
+        .seg > button.bg-brand { background: var(--brand); color: #0a0a0a; font-weight: 700; box-shadow: 0 8px 20px -10px rgba(255,95,0,.8); }
+
+        .chip { display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .8rem; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: .04em; }
+
+        /* Stat rings */
+        .ring-track { stroke: rgba(255,255,255,.08); }
+        .ring-bar { stroke: var(--brand); stroke-linecap: round; transition: stroke-dashoffset 1s var(--ease); transform: rotate(-90deg); transform-origin: 50% 50%; }
+        .ring-bar.muted { stroke: #52525b; }
+
+        /* Photo dropzone */
+        .dropzone { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .35rem; text-align: center; padding: 1.75rem 1rem; border-radius: 18px; border: 1.5px dashed rgba(255,255,255,.18); background: rgba(255,255,255,.025); cursor: pointer; transition: border-color .2s, background-color .2s; }
+        .dropzone:hover, .dropzone.drag { border-color: var(--brand); background: rgba(255,95,0,.06); }
+
+        /* Service slots */
+        .slot { min-height: 40px; padding: 0 .9rem; border-radius: 12px; font-size: 13px; font-weight: 600; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); transition: all .2s; }
+        .slot:hover { border-color: var(--brand); color: var(--brand); }
+
+        /* Chat */
+        .bubble { max-width: 85%; padding: .75rem 1rem; border-radius: 18px; font-size: 14px; line-height: 1.5; animation: cardIn .35s var(--ease) both; }
+        .bubble-bot { background: rgba(255,255,255,.06); border-bottom-left-radius: 6px; }
+        .bubble-user { background: var(--brand); color: #0a0a0a; font-weight: 500; margin-left: auto; border-bottom-right-radius: 6px; }
+        .typing span { display: inline-block; width: 6px; height: 6px; margin: 0 2px; border-radius: 50%; background: #a1a1aa; animation: typing 1s infinite; }
+        .typing span:nth-child(2) { animation-delay: .15s; } .typing span:nth-child(3) { animation-delay: .3s; }
+        @keyframes typing { 50% { opacity: .2; transform: translateY(-3px); } }
+        .no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { scrollbar-width: none; }
+
+        /* Leaflet dark theme */
+        .leaflet-popup-content-wrapper { background: #18181b; color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; }
+        .leaflet-popup-tip { background: #18181b; }
+        .leaflet-container a.leaflet-popup-close-button { color: #ff5f00; }
+        .leaflet-control-zoom a { background-color: #18181b !important; color: #fff !important; border-color: rgba(255,255,255,0.1) !important; border-radius: 8px !important; margin-bottom: 4px; }
+        .leaflet-container { background: #111; font-family: 'Inter', sans-serif; }
+
+        /* ---------- Insurance claim form ---------- */
+        .claim-section { background: var(--ink-2); border: 1px solid var(--line); border-radius: 24px; padding: 1.5rem; }
+        @media (min-width: 768px) { .claim-section { padding: 2rem; } }
+        .section-header { font-family: 'Bricolage Grotesque', 'Inter', sans-serif; font-weight: 700; font-size: 1.05rem; letter-spacing: -0.01em; color: #fff; padding-bottom: 1rem; margin-bottom: 1.25rem; border-bottom: 1px solid var(--line); display: flex; gap: .75rem; align-items: baseline; }
+        .section-header::before { content: ''; flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: var(--brand); transform: translateY(-2px); }
+        .field-group { display: flex; flex-direction: column; min-width: 0; }
+        .damage-form-label { font-size: 12px; font-weight: 600; color: #a1a1aa; margin-bottom: 6px; line-height: 1.35; }
+        .damage-input { width: 100%; min-height: 46px; background: #18181b; border: 1px solid #3f3f46; color: #fff; border-radius: 12px; padding: 10px 14px; font-size: 14px; outline: none; transition: border-color .2s, box-shadow .2s; }
+        .damage-input:hover { border-color: #52525b; }
+        .damage-input:focus { border-color: var(--brand); box-shadow: var(--ring); }
+        .damage-input:disabled { opacity: .55; cursor: not-allowed; }
+        .damage-input::placeholder { color: #71717a; }
+        .damage-input[type=datetime-local] { color-scheme: dark; }
+        .q-text { font-size: 14px; font-weight: 600; color: #e4e4e7; }
+        .choice { display: inline-flex; align-items: center; gap: .55rem; min-height: 40px; padding: 0 .95rem; border-radius: 999px; font-size: 14px; font-weight: 500; border: 1px solid #3f3f46; background: #18181b; cursor: pointer; transition: border-color .2s, background-color .2s; }
+        .choice:hover { border-color: #71717a; }
+        .choice:has(input:checked) { border-color: var(--brand); background: rgba(255,95,0,.12); }
+        .declaration-item { font-size: 14px; color: #d4d4d8; line-height: 1.6; }
+
+        dialog { color: #fff; }
+        dialog::backdrop { background: rgba(0,0,0,.6); backdrop-filter: blur(6px); }
+        dialog[open] { animation: pageIn .35s var(--ease); }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+            .js .reveal { opacity: 1; transform: none; }
+            .marquee-track { animation: none; }
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden" id="top">
+    <a href="#main" class="skip-link" data-en="Skip to content" data-pl="Przejdź do treści">Skip to content</a>
+
+    <!-- Navigation -->
+    <header class="fixed top-3 inset-x-3 md:top-4 md:inset-x-6 z-[100]">
+        <nav class="max-w-7xl mx-auto flex items-center justify-between gap-3 rounded-full bg-black/55 backdrop-blur-xl border border-white/10 pl-5 pr-2 py-2 shadow-[0_10px_40px_-15px_rgba(0,0,0,.6)]" aria-label="Main">
+            <div class="flex items-center gap-6">
+                <button type="button" class="text-2xl md:text-[1.7rem] font-black italic tracking-tighter leading-none" onclick="showPage('home')" aria-label="VOLTA home">VOL<span class="brand">TA</span></button>
+                <div class="hidden md:flex items-center gap-1">
+                    <button type="button" onclick="showPage('home')" id="nav-genz" data-nav="home" class="nav-link is-active" aria-current="page"><span data-en="Gen Z Exclusive" data-pl="Gen Z Exclusive">Gen Z Exclusive</span></button>
+                    <button type="button" onclick="showPage('loyalty')" id="nav-loyalty" data-nav="loyalty" class="nav-link"><span data-en="Loyalty Programs" data-pl="Programy lojalnościowe">Loyalty Programs</span></button>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="lang-toggle" role="group" aria-label="Language">
+                    <button type="button" id="lang-pl" class="lang-btn" onclick="setLang('pl')" aria-pressed="false">PL</button>
+                    <button type="button" id="lang-en" class="lang-btn active" onclick="setLang('en')" aria-pressed="true">EN</button>
+                </div>
+                <button type="button" onclick="showPage('client-panel')" data-nav="client-panel" class="btn btn-primary btn-sm hidden sm:inline-flex">
+                    <i class="fa-solid fa-user-gear" aria-hidden="true"></i><span data-en="Client Panel" data-pl="Panel Klienta">Client Panel</span>
+                </button>
+                <button type="button" id="menu-btn" class="icon-btn md:hidden bg-white/10 hover:bg-white/20" aria-expanded="false" aria-controls="mobile-menu" onclick="toggleMenu()" data-en-aria="Open menu" data-pl-aria="Otwórz menu" aria-label="Open menu">
+                    <i class="fa-solid fa-bars" aria-hidden="true"></i>
+                </button>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="md:hidden hidden mt-2 rounded-3xl bg-ink-2/95 backdrop-blur-xl border border-white/10 p-2 shadow-2xl">
+            <button type="button" onclick="showPage('home')" data-nav="home" class="nav-link w-full text-left !rounded-2xl !py-4 is-active"><span data-en="Gen Z Exclusive" data-pl="Gen Z Exclusive">Gen Z Exclusive</span></button>
+            <button type="button" onclick="showPage('loyalty')" data-nav="loyalty" class="nav-link w-full text-left !rounded-2xl !py-4"><span data-en="Loyalty Programs" data-pl="Programy lojalnościowe">Loyalty Programs</span></button>
+            <button type="button" onclick="showPage('client-panel')" data-nav="client-panel" class="nav-link w-full text-left !rounded-2xl !py-4"><span data-en="Client Panel" data-pl="Panel Klienta">Client Panel</span></button>
+        </div>
+    </header>
+
+    <main id="main">
+    <!-- HOME -->
+    <div id="home-page" class="page-section active on-light">
+        <section class="on-dark relative min-h-[100svh] flex items-end hero-gradient text-white rounded-b-[36px] md:rounded-b-[56px] overflow-hidden pt-32 pb-40 md:pb-48">
+            <div class="hero-glow absolute inset-0 pointer-events-none" aria-hidden="true"></div>
+            <div class="wrap relative z-10">
+                <div class="max-w-4xl">
+                    <div class="flex flex-wrap items-center gap-2 mb-6">
+                        <span class="chip bg-brand text-ink uppercase tracking-[0.18em]" data-en="New Generation" data-pl="Nowa Generacja">New Generation</span>
+                        <span class="chip bg-white/10 backdrop-blur border border-white/15 text-white/90"><i class="fa-solid fa-sun text-brand" aria-hidden="true"></i><span data-en="Summer 2027 fleet is live" data-pl="Flota na lato 2027 już dostępna">Summer 2027 fleet is live</span></span>
+                    </div>
+                    <h1 class="font-display font-extrabold text-[clamp(3.6rem,11.5vw,10.5rem)] leading-[0.86] mb-7" data-en="Gen Z <span class='brand'>Exclusive</span>" data-pl="Gen Z <span class='brand'>Exclusive</span>">Gen Z <span class="brand">Exclusive</span></h1>
+                    <p class="text-lg md:text-2xl text-white/85 max-w-xl mb-9 leading-relaxed" data-en="Rent the car you actually want — no red tape, no young-driver surcharge." data-pl="Wypożycz auto, o którym marzysz — bez zbędnych formalności i dopłat za wiek.">Rent the car you actually want — no red tape, no young-driver surcharge.</p>
+                    <div class="flex flex-wrap gap-3">
+                        <a href="#search" class="btn btn-primary btn-lg"><span data-en="Explore now" data-pl="Sprawdź teraz">Explore now</span><i class="fa-solid fa-arrow-down" aria-hidden="true"></i></a>
+                        <button type="button" onclick="showPage('client-panel')" class="btn btn-ghost btn-lg backdrop-blur"><i class="fa-solid fa-user-gear" aria-hidden="true"></i><span data-en="Client Panel" data-pl="Panel Klienta">Client Panel</span></button>
+                    </div>
+                </div>
+            </div>
+            <!-- Sticker -->
+            <div class="hidden md:flex absolute right-10 lg:right-20 top-[26%] w-40 h-40 lg:w-48 lg:h-48 float" style="--r:-8deg; transform: rotate(-8deg);" aria-hidden="true">
+                <svg viewBox="0 0 200 200" class="absolute inset-0 w-full h-full">
+                    <circle cx="100" cy="100" r="100" fill="#ff5f00"/>
+                    <g class="spin" style="transform-origin: 100px 100px;">
+                        <defs><path id="sticker-circle" d="M100,100 m-76,0 a76,76 0 1,1 152,0 a76,76 0 1,1 -152,0"/></defs>
+                        <text font-family="Inter, sans-serif" font-size="15" font-weight="800" fill="#0a0a0a" letter-spacing="2"><textPath href="#sticker-circle" data-en="NO YOUNG-DRIVER FEE ✺ 18+ WELCOME ✺ NO RED TAPE ✺" data-pl="BEZ DOPŁAT ZA WIEK ✺ 18+ MILE WIDZIANI ✺ ZERO FORMALNOŚCI ✺">NO YOUNG-DRIVER FEE ✺ 18+ WELCOME ✺ NO RED TAPE ✺</textPath></text>
+                    </g>
+                </svg>
+                <div class="relative m-auto text-center text-ink leading-none">
+                    <div class="font-display font-extrabold text-4xl lg:text-5xl">0</div>
+                    <div class="text-[11px] font-extrabold uppercase tracking-wider mt-1">PLN</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="search" class="relative -mt-24 md:-mt-28 z-20" aria-labelledby="search-title">
+            <div class="wrap">
+                <form class="bg-white text-ink rounded-[28px] p-4 md:p-5 shadow-[0_30px_80px_-30px_rgba(0,0,0,.45)] ring-1 ring-black/5" onsubmit="event.preventDefault(); runSearch();">
+                    <h2 id="search-title" class="sr-only" data-en="Find your car" data-pl="Znajdź auto">Find your car</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.35fr_1fr_1fr_1fr_auto] gap-3 md:gap-4 items-end">
+                        <div>
+                            <label for="search-loc" class="label !text-stone-500" data-en="Pick-up location" data-pl="Miejsce odbioru">Pick-up location</label>
+                            <input id="search-loc" list="loc-list" data-en-ph="Choose an airport..." data-pl-ph="Wybierz lotnisko..." placeholder="Choose an airport..." class="field field-light">
+                            <datalist id="loc-list">
+                                <option value="Gdańsk Airport (GDN)"><option value="Katowice Pyrzowice (KTW)"><option value="Kraków Airport (KRK)"><option value="Łódź Airport (LCJ)"><option value="Warsaw Chopin (WAW)"><option value="Wrocław Airport (WRO)">
+                            </datalist>
+                        </div>
+                        <div>
+                            <label for="search-bodytype" class="label !text-stone-500" data-en="Body type" data-pl="Typ nadwozia">Body type</label>
+                            <select id="search-bodytype" class="field field-light">
+                                <option value="all" data-en="All" data-pl="Wszystkie">All</option><option value="convertible" data-en="Convertible" data-pl="Kabriolet">Convertible</option><option value="suv">SUV</option><option value="hatchback">Hatchback</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="search-budget" class="label !text-stone-500" data-en="Max budget (PLN)" data-pl="Budżet maks. (PLN)">Max budget (PLN)</label>
+                            <input type="number" id="search-budget" min="0" step="50" inputmode="numeric" data-en-ph="e.g. 900" data-pl-ph="np. 900" placeholder="e.g. 900" class="field field-light">
+                        </div>
+                        <div>
+                            <label for="search-when" class="label !text-stone-500" data-en="When?" data-pl="Kiedy?">When?</label>
+                            <select id="search-when" class="field field-light font-semibold">
+                                <option value="weekend" data-en="For the weekend" data-pl="Na weekend">For the weekend</option><option value="everyday" data-en="Everyday" data-pl="Na co dzień">Everyday</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg w-full sm:col-span-2 lg:col-span-1 !min-h-[52px]"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span data-en="Search" data-pl="Szukaj">Search</span></button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Marquee -->
+        <div class="overflow-hidden pt-12 pb-6 md:pt-16">
+            <div class="-rotate-2 scale-[1.03] bg-brand text-ink py-4 md:py-5 border-y-2 border-ink" aria-label="Highlights">
+                <div class="marquee"><div class="marquee-track font-display font-bold text-xl md:text-3xl" id="marquee-track"></div></div>
+            </div>
+        </div>
+
+        <section class="py-24 md:py-32">
+            <div class="wrap grid lg:grid-cols-2 gap-14 lg:gap-20 items-center">
+                <div class="reveal">
+                    <p class="text-sm font-bold uppercase tracking-[0.2em] text-stone-500 mb-5" data-en="Why VOLTA" data-pl="Dlaczego VOLTA">Why VOLTA</p>
+                    <h2 class="font-display font-extrabold text-5xl md:text-7xl leading-[0.95] mb-10" data-en="The rules are simple:<br><span class='brand'>You're in charge.</span>" data-pl="Zasady są proste:<br><span class='brand'>Ty rządzisz.</span>">The rules are simple:<br><span class="brand">You're in charge.</span></h2>
+                    <div class="grid gap-4">
+                        <div class="flex gap-5 bg-white rounded-3xl p-6 ring-1 ring-black/5">
+                            <div class="w-12 h-12 bg-brand text-ink rounded-2xl flex items-center justify-center shrink-0 text-lg"><i class="fa-solid fa-id-card" aria-hidden="true"></i></div>
+                            <div>
+                                <h3 class="font-bold text-xl mb-1" data-en="No young-driver fees" data-pl="Brak opłat za wiek">No young-driver fees</h3>
+                                <p class="text-stone-600 leading-relaxed" data-en="Gen Z? Forget the young-driver surcharge. You start on equal terms." data-pl="Jesteś Gen Z? Zapomnij o dopłatach dla młodych kierowców. Startujesz na równych zasadach.">Gen Z? Forget the young-driver surcharge. You start on equal terms.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-5 bg-white rounded-3xl p-6 ring-1 ring-black/5">
+                            <div class="w-12 h-12 bg-ink text-brand rounded-2xl flex items-center justify-center shrink-0 text-lg"><i class="fa-solid fa-bolt" aria-hidden="true"></i></div>
+                            <div>
+                                <h3 class="font-bold text-xl mb-1" data-en="Full independence" data-pl="Pełna niezależność">Full independence</h3>
+                                <p class="text-stone-600 leading-relaxed" data-en="Everything lives in the Client Panel — from booking to 3D damage reports. You decide, we deliver." data-pl="Wszystko w Panelu Klienta — od rezerwacji po zgłoszenie szkody 3D. Ty decydujesz, my dostarczamy.">Everything lives in the Client Panel — from booking to 3D damage reports. You decide, we deliver.</p>
+                                <button type="button" onclick="showPage('client-panel')" class="mt-3 inline-flex items-center gap-2 font-bold text-sm underline decoration-brand decoration-2 underline-offset-4 hover:text-brand-600"><span data-en="Open the Client Panel" data-pl="Otwórz Panel Klienta">Open the Client Panel</span><i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative reveal">
+                    <div class="absolute -bottom-5 -right-5 w-full h-full border-2 border-brand rounded-[40px]" aria-hidden="true"></div>
+                    <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1000&auto=format&fit=crop" alt="A group of friends sitting together, looking out over mountains and a lake" class="relative z-10 rounded-[40px] shadow-2xl w-full aspect-[4/3] object-cover" loading="lazy">
+                    <div class="on-dark absolute z-20 -top-5 left-6 md:-left-6 bg-ink text-white rounded-2xl px-5 py-3 shadow-xl -rotate-3 float" style="--r:-3deg">
+                        <p class="font-display font-bold text-lg leading-tight"><span class="brand" data-en="No red tape." data-pl="Zero formalności.">No red tape.</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pb-24 md:pb-32" aria-labelledby="fun-title">
+            <div class="wrap">
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 reveal">
+                    <div>
+                        <p class="text-sm font-bold uppercase tracking-[0.2em] text-stone-500 mb-4" data-en="Priced per day" data-pl="Cena za dzień">Priced per day</p>
+                        <h2 id="fun-title" class="font-display font-extrabold text-4xl md:text-6xl leading-none" data-en="Weekend <span class='brand'>Fun Cars</span>" data-pl="Weekendowe <span class='brand'>Fun-Cary</span>">Weekend <span class="brand">Fun Cars</span></h2>
+                    </div>
+                    <p class="text-stone-600 max-w-sm" data-en="Convertibles, icons and off-roaders for the days that deserve a soundtrack." data-pl="Kabriolety, ikony i terenówki na dni, które zasługują na soundtrack.">Convertibles, icons and off-roaders for the days that deserve a soundtrack.</p>
+                </div>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="fun-grid"></div>
+                <div class="mt-12 text-center" id="fun-btn-container"><button type="button" onclick="expandFunFleet()" class="btn btn-dark btn-lg"><span data-en="See more rides +" data-pl="Zobacz więcej fur +">See more rides +</span></button></div>
+            </div>
+        </section>
+
+        <section class="on-dark py-24 md:py-32 bg-ink text-white rounded-t-[36px] md:rounded-t-[56px]" aria-labelledby="youth-title">
+            <div class="wrap">
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 reveal">
+                    <div>
+                        <span class="chip bg-white/10 text-white/80 mb-4" data-en="Long-term subscription" data-pl="Subskrypcja długoterminowa">Long-term subscription</span>
+                        <h2 id="youth-title" class="font-display font-extrabold text-4xl md:text-6xl leading-none" data-en="Made for <span class='brand'>young drivers</span>" data-pl="Dobre dla <span class='brand'>młodzieży</span>">Made for <span class="brand">young drivers</span></h2>
+                    </div>
+                    <p class="text-zinc-400 max-w-sm" data-en="One monthly price for your everyday car. Service, tyres and damage handling live in your Client Panel." data-pl="Jedna miesięczna cena za auto na co dzień. Serwis, opony i szkody załatwisz w Panelu Klienta.">One monthly price for your everyday car. Service, tyres and damage handling live in your Client Panel.</p>
+                </div>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="youth-grid"></div>
+                <div class="mt-12 text-center" id="youth-btn-container"><button type="button" onclick="expandYouthFleet()" class="btn btn-light btn-lg"><span data-en="See more rides +" data-pl="Zobacz więcej fur +">See more rides +</span></button></div>
+            </div>
+        </section>
+
+        <section class="on-dark py-8 md:py-16 bg-ink text-white overflow-hidden">
+            <div class="wrap">
+                <div class="bg-brand text-ink rounded-[40px] md:rounded-[56px] p-8 sm:p-12 md:p-16 lg:p-20 grid lg:grid-cols-[1.2fr_1fr] items-center gap-12 relative overflow-hidden reveal">
+                    <div class="absolute -right-10 -bottom-16 font-display font-extrabold text-[16rem] leading-none text-black/[0.07] select-none pointer-events-none" aria-hidden="true">VOLTA</div>
+                    <div class="relative z-10 text-center lg:text-left">
+                        <h2 class="font-display font-extrabold text-5xl md:text-7xl leading-[0.92] mb-6" data-en="Everything in your pocket." data-pl="Wszystko w Twojej kieszeni.">Everything in your pocket.</h2>
+                        <p class="text-lg md:text-xl mb-10 font-medium text-ink/80 max-w-xl mx-auto lg:mx-0" data-en="Download the VOLTA app to unlock exclusive Gen Z rates and manage your rental without putting your phone down." data-pl="Pobierz aplikację VOLTA, aby odblokować ekskluzywne stawki dla Gen Z i zarządzać wynajmem bez wypuszczania telefonu z rąk.">Download the VOLTA app to unlock exclusive Gen Z rates and manage your rental without putting your phone down.</p>
+                        <div class="flex flex-wrap gap-3 justify-center lg:justify-start">
+                            <button type="button" onclick="appSoon()" class="btn btn-dark btn-lg"><i class="fa-brands fa-apple text-xl" aria-hidden="true"></i>App Store</button>
+                            <button type="button" onclick="appSoon()" class="btn btn-dark btn-lg"><i class="fa-brands fa-google-play" aria-hidden="true"></i>Google Play</button>
+                        </div>
+                    </div>
+                    <!-- Phone mock -->
+                    <div class="relative z-10 mx-auto w-[250px] sm:w-[270px] rotate-3 float" style="--r:3deg" aria-hidden="true">
+                        <div class="bg-ink rounded-[42px] p-3 shadow-[0_40px_80px_-30px_rgba(0,0,0,.6)] ring-4 ring-black/20">
+                            <div class="bg-ink-3 rounded-[32px] p-5 text-white">
+                                <div class="flex items-center justify-between mb-5"><span class="font-black italic tracking-tighter text-lg">VOL<span class="brand">TA</span></span><span class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs"><i class="fa-solid fa-user"></i></span></div>
+                                <p class="text-[11px] uppercase tracking-widest text-zinc-400 mb-1">Audi Q3 · WAW 420X</p>
+                                <p class="font-display font-bold text-3xl mb-4">675 <span class="text-sm text-zinc-400 font-sans font-semibold" data-en="days left" data-pl="dni zostało">days left</span></p>
+                                <div class="h-2 rounded-full bg-white/10 mb-5 overflow-hidden"><div class="h-full w-[38%] bg-brand rounded-full"></div></div>
+                                <div class="grid grid-cols-2 gap-2 mb-2">
+                                    <div class="bg-white/5 rounded-2xl p-3"><i class="fa-solid fa-car-burst text-brand mb-2"></i><p class="text-[11px] font-semibold" data-en="Report damage" data-pl="Zgłoś szkodę">Report damage</p></div>
+                                    <div class="bg-white/5 rounded-2xl p-3"><i class="fa-solid fa-screwdriver-wrench text-brand mb-2"></i><p class="text-[11px] font-semibold" data-en="Book tyres" data-pl="Umów opony">Book tyres</p></div>
+                                </div>
+                                <div class="bg-brand text-ink rounded-2xl p-3 text-[11px] font-bold flex items-center justify-between"><span data-en="+320 partner points" data-pl="+320 punktów partnera">+320 partner points</span><i class="fa-solid fa-gift"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="on-dark bg-ink text-white pt-20 pb-10">
+            <div class="wrap">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-10 mb-16">
+                    <div class="col-span-2 md:col-span-1">
+                        <div class="text-4xl font-black italic tracking-tighter mb-6 leading-none">VOL<span class="brand">TA</span></div>
+                        <div class="flex gap-2 text-xl">
+                            <a href="#top" class="icon-btn bg-white/5 hover:bg-brand hover:text-ink" aria-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+                            <a href="#top" class="icon-btn bg-white/5 hover:bg-brand hover:text-ink" aria-label="TikTok"><i class="fa-brands fa-tiktok" aria-hidden="true"></i></a>
+                            <a href="#top" class="icon-btn bg-white/5 hover:bg-brand hover:text-ink" aria-label="YouTube"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm uppercase tracking-widest mb-5 text-zinc-300" data-en="Terms" data-pl="Warunki">Terms</h3>
+                        <ul class="space-y-3 text-zinc-400">
+                            <li><a href="#top" class="hover:text-brand transition" data-en="Rental Terms" data-pl="Warunki Najmu">Rental Terms</a></li>
+                            <li><a href="#top" class="hover:text-brand transition" data-en="Privacy Policy" data-pl="Polityka Prywatności">Privacy Policy</a></li>
+                            <li><a href="#top" class="hover:text-brand transition" data-en="Program Terms" data-pl="Regulamin Programu">Program Terms</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm uppercase tracking-widest mb-5 text-zinc-300" data-en="Company" data-pl="Informacje">Company</h3>
+                        <ul class="space-y-3 text-zinc-400">
+                            <li><a href="#top" class="hover:text-brand transition" data-en="About" data-pl="O nas">About</a></li>
+                            <li><a href="#top" class="hover:text-brand transition" data-en="Careers" data-pl="Kariera">Careers</a></li>
+                            <li><a href="#top" class="hover:text-brand transition" data-en="Press" data-pl="Dla Prasy">Press</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-span-2 md:col-span-1">
+                        <h3 class="font-bold text-sm uppercase tracking-widest mb-5 text-zinc-300" data-en="Contact" data-pl="Kontakt">Contact</h3>
+                        <p class="mb-3"><a href="tel:+48220000000" class="text-zinc-400 hover:text-brand transition">+48 22 000 00 00</a></p>
+                        <p><a href="mailto:hello@volta.example" class="text-zinc-400 hover:text-brand transition">hello@volta.example</a></p>
+                    </div>
+                </div>
+                <div class="border-t border-white/10 pt-8 flex flex-col sm:flex-row justify-between gap-3 text-sm text-zinc-500">
+                    <p>© 2027 VOLTA</p>
+                    <p data-en="Made for the next generation of drivers." data-pl="Stworzone dla nowego pokolenia kierowców.">Made for the next generation of drivers.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- SEARCH RESULTS -->
+    <div id="results-page" class="page-section pt-32 md:pt-36 pb-24 bg-ink min-h-screen">
+        <div class="wrap">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+                <div>
+                    <p class="brand font-bold uppercase tracking-[0.25em] text-xs mb-4">Gen Z Exclusive</p>
+                    <h1 id="results-title" class="font-display font-extrabold text-4xl md:text-6xl leading-none"></h1>
+                    <p id="results-sub" class="text-zinc-400 mt-4 text-lg" aria-live="polite"></p>
+                </div>
+                <button type="button" onclick="showPage('home'); setTimeout(function(){var s=document.getElementById('search'); if(s) s.scrollIntoView({behavior:'smooth'});},60)" class="btn btn-ghost shrink-0"><i class="fa-solid fa-sliders" aria-hidden="true"></i><span data-en="Modify search" data-pl="Zmień wyszukiwanie">Modify search</span></button>
+            </div>
+            <div id="results-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            <div id="results-empty" class="hidden text-center py-24 panel-card">
+                <div class="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-6"><i class="fa-solid fa-car-side text-3xl text-zinc-500" aria-hidden="true"></i></div>
+                <p class="text-xl font-bold" data-en="No cars match your filters." data-pl="Żadne auto nie pasuje do filtrów.">No cars match your filters.</p>
+                <p class="text-zinc-400 mt-2" data-en="Try raising your budget or widening the body type." data-pl="Spróbuj podnieść budżet lub poszerzyć typ nadwozia.">Try raising your budget or widening the body type.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOYALTY -->
+    <div id="loyalty-page" class="page-section pt-32 md:pt-36 pb-24 bg-ink">
+        <div class="wrap">
+            <div class="max-w-3xl mb-14">
+                <p class="brand font-bold uppercase tracking-[0.25em] text-xs mb-4" data-en="Partner network" data-pl="Sieć partnerska">Partner network</p>
+                <h1 class="font-display font-extrabold text-5xl md:text-7xl leading-[0.95] mb-6" data-en="Loyalty <span class='brand'>Programs</span>" data-pl="Programy <span class='brand'>lojalnościowe</span>">Loyalty <span class="brand">Programs</span></h1>
+                <p class="text-lg md:text-xl text-zinc-400 leading-relaxed" data-en="One rental, many rewards. Link your partner accounts once and every kilometre starts paying you back." data-pl="Jeden wynajem, wiele nagród. Połącz konta partnerów raz, a każdy kilometr zacznie się zwracać.">One rental, many rewards. Link your partner accounts once and every kilometre starts paying you back.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-6 gap-5">
+                <article class="loyalty-tile h-[440px] lg:col-span-3">
+                    <img src="https://images.unsplash.com/photo-1569154941061-e231b4725ef1?q=80&w=1000&auto=format&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover -z-10" loading="lazy">
+                    <span class="chip absolute top-5 left-5 bg-black/50 backdrop-blur text-white"><i class="fa-solid fa-plane brand" aria-hidden="true"></i><span data-en="Travel" data-pl="Podróże">Travel</span></span>
+                    <div class="loyalty-overlay">
+                        <p class="brand font-bold text-xs uppercase tracking-[0.18em] mb-2" data-en="Air Miles Status" data-pl="Status Milowy">Air Miles Status</p>
+                        <h2 class="font-display font-extrabold text-3xl md:text-4xl leading-none mb-3" data-en="Airline Alliance" data-pl="Sojusz Lotniczy">Airline Alliance</h2>
+                        <p class="text-zinc-300 mb-5 max-w-md" data-en="Extend your trip and earn air miles in the air and points on the road." data-pl="Przedłuż podróż i zbieraj mile w locie oraz punkty na trasie.">Extend your trip and earn air miles in the air and points on the road.</p>
+                        <button type="button" class="btn btn-light btn-sm w-fit" onclick="partnerAction(this)"><span data-en="Learn more" data-pl="Dowiedz się więcej">Learn more</span><i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></button>
+                    </div>
+                </article>
+                <article class="loyalty-tile h-[440px] lg:col-span-3">
+                    <img src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?q=80&w=1000&auto=format&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover -z-10" loading="lazy">
+                    <span class="chip absolute top-5 left-5 bg-black/50 backdrop-blur text-white"><i class="fa-solid fa-golf-ball-tee brand" aria-hidden="true"></i><span data-en="Sport" data-pl="Sport">Sport</span></span>
+                    <div class="loyalty-overlay">
+                        <p class="brand font-bold text-xs uppercase tracking-[0.18em] mb-2" data-en="Golf Partnership" data-pl="Partnerstwo Golfowe">Golf Partnership</p>
+                        <h2 class="font-display font-extrabold text-3xl md:text-4xl leading-none mb-3" data-en="Drive on Green" data-pl="Drive on Green">Drive on Green</h2>
+                        <p class="text-zinc-300 mb-5 max-w-md" data-en="Cars made for tournaments. We're the official partner for your golf-day mobility." data-pl="Samochody idealne na turnieje. Oficjalny partner Twojej golfowej mobilności.">Cars made for tournaments. We're the official partner for your golf-day mobility.</p>
+                        <button type="button" class="btn btn-light btn-sm w-fit" onclick="partnerAction(this)"><span data-en="Details" data-pl="Szczegóły">Details</span><i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></button>
+                    </div>
+                </article>
+                <article class="loyalty-tile h-[400px] lg:col-span-2">
+                    <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?q=80&w=800&auto=format&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover -z-10" loading="lazy">
+                    <span class="chip absolute top-5 left-5 bg-black/50 backdrop-blur text-white"><i class="fa-solid fa-credit-card brand" aria-hidden="true"></i><span data-en="Cards" data-pl="Karty">Cards</span></span>
+                    <div class="loyalty-overlay">
+                        <p class="brand font-bold text-xs uppercase tracking-[0.18em] mb-2" data-en="Card Upgrade" data-pl="Upgrade Kartowy">Card Upgrade</p>
+                        <h2 class="font-display font-extrabold text-3xl leading-none mb-3" data-en="Benefit Lounge" data-pl="Benefit Lounge">Benefit Lounge</h2>
+                        <p class="text-zinc-300 mb-5" data-en="Automatic status upgrade for holders of selected partner cards." data-pl="Automatyczny upgrade statusu dla użytkowników wybranych kart partnerskich.">Automatic status upgrade for holders of selected partner cards.</p>
+                        <button type="button" class="btn btn-light btn-sm w-fit" onclick="partnerAction(this)"><span data-en="Activate" data-pl="Aktywuj">Activate</span><i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></button>
+                    </div>
+                </article>
+                <article class="loyalty-tile h-[400px] lg:col-span-2">
+                    <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=800&auto=format&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover -z-10" loading="lazy">
+                    <span class="chip absolute top-5 left-5 bg-black/50 backdrop-blur text-white"><i class="fa-solid fa-building-columns brand" aria-hidden="true"></i><span data-en="Fintech" data-pl="Fintech">Fintech</span></span>
+                    <div class="loyalty-overlay">
+                        <p class="brand font-bold text-xs uppercase tracking-[0.18em] mb-2" data-en="Premium Plan" data-pl="Plan Premium">Premium Plan</p>
+                        <h2 class="font-display font-extrabold text-3xl leading-none mb-3" data-en="Neobank Perks" data-pl="Perki Neobanku">Neobank Perks</h2>
+                        <p class="text-zinc-300 mb-5" data-en="Collision damage waiver (CDW) included with your premium neobank plan." data-pl="Ubezpieczenie wkładu własnego (CDW) zawarte w planie premium neobanku.">Collision damage waiver (CDW) included with your premium neobank plan.</p>
+                        <button type="button" class="btn btn-light btn-sm w-fit" onclick="partnerAction(this)"><span data-en="Link accounts" data-pl="Połącz konta">Link accounts</span><i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></button>
+                    </div>
+                </article>
+                <article class="loyalty-tile h-[400px] md:col-span-2 lg:col-span-2">
+                    <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1000&auto=format&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover -z-10" loading="lazy">
+                    <span class="chip absolute top-5 left-5 bg-black/50 backdrop-blur text-white"><i class="fa-solid fa-bag-shopping brand" aria-hidden="true"></i><span data-en="Retail" data-pl="Retail">Retail</span></span>
+                    <div class="loyalty-overlay">
+                        <p class="brand font-bold text-xs uppercase tracking-[0.18em] mb-2" data-en="Luxury Retail" data-pl="Luksusowy Retail">Luxury Retail</p>
+                        <h2 class="font-display font-extrabold text-3xl leading-none mb-3" data-en="Luxe Shopping" data-pl="Luxe Shopping">Luxe Shopping</h2>
+                        <p class="text-zinc-300 mb-5" data-en="Spend above a set threshold to unlock a weekend with a luxury model from our fleet." data-pl="Wydaj powyżej progu, aby odblokować weekend z luksusowym modelem z naszej floty.">Spend above a set threshold to unlock a weekend with a luxury model from our fleet.</p>
+                        <button type="button" class="btn btn-light btn-sm w-fit" onclick="partnerAction(this)"><span data-en="Get code" data-pl="Odbierz kod">Get code</span><i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></button>
+                    </div>
+                </article>
+            </div>
+
+            <!-- How it works -->
+            <div class="mt-20 grid md:grid-cols-3 gap-5">
+                <div class="panel-card p-7 reveal">
+                    <div class="flex items-center gap-3 mb-4"><span class="font-display font-extrabold text-4xl brand">01</span><i class="fa-solid fa-link text-zinc-500" aria-hidden="true"></i></div>
+                    <h3 class="font-bold text-lg mb-2" data-en="Link once" data-pl="Połącz raz">Link once</h3>
+                    <p class="text-zinc-400" data-en="Connect your airline, bank or card account in the Client Panel." data-pl="Połącz konto linii lotniczej, banku lub karty w Panelu Klienta.">Connect your airline, bank or card account in the Client Panel.</p>
+                </div>
+                <div class="panel-card p-7 reveal">
+                    <div class="flex items-center gap-3 mb-4"><span class="font-display font-extrabold text-4xl brand">02</span><i class="fa-solid fa-road text-zinc-500" aria-hidden="true"></i></div>
+                    <h3 class="font-bold text-lg mb-2" data-en="Drive as usual" data-pl="Jeździj jak zwykle">Drive as usual</h3>
+                    <p class="text-zinc-400" data-en="Every rental and every kilometre is tracked automatically." data-pl="Każdy wynajem i każdy kilometr liczy się automatycznie.">Every rental and every kilometre is tracked automatically.</p>
+                </div>
+                <div class="panel-card p-7 reveal">
+                    <div class="flex items-center gap-3 mb-4"><span class="font-display font-extrabold text-4xl brand">03</span><i class="fa-solid fa-gift text-zinc-500" aria-hidden="true"></i></div>
+                    <h3 class="font-bold text-lg mb-2" data-en="Collect perks" data-pl="Odbieraj benefity">Collect perks</h3>
+                    <p class="text-zinc-400" data-en="Miles, upgrades and weekend cars land in your account." data-pl="Mile, upgrade'y i auta na weekend trafiają na Twoje konto.">Miles, upgrades and weekend cars land in your account.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CLIENT PANEL -->
+    <div id="client-panel-page" class="page-section pt-28 md:pt-36 pb-24 bg-ink min-h-screen">
+        <div class="wrap">
+            <div class="flex flex-col md:flex-row justify-between md:items-end mb-8 gap-6">
+                <div>
+                    <p class="text-zinc-400 font-semibold mb-3" data-en="Good to see you 👋" data-pl="Miło Cię widzieć 👋">Good to see you 👋</p>
+                    <h1 class="font-display font-extrabold text-4xl md:text-5xl leading-none" data-en="Welcome to your <span class='brand'>Client Panel</span>" data-pl="Witaj w <span class='brand'>Panelu Klienta</span>">Welcome to your <span class="brand">Client Panel</span></h1>
+                </div>
+                <div class="w-full md:w-72">
+                    <label for="car-selector" class="label" data-en="Your vehicle" data-pl="Twój pojazd">Your vehicle</label>
+                    <select id="car-selector" onchange="updateRentalStats()" class="field font-semibold">
+                        <option value="audi">Audi Q3 (WAW 420X)</option>
+                        <option value="mini">Mini Cabrio (WAW 697Y)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Quick actions -->
+            <nav class="flex gap-2 overflow-x-auto no-scrollbar -mx-5 px-5 md:mx-0 md:px-0 mb-8" aria-label="Panel sections">
+                <button type="button" class="btn btn-ghost btn-sm shrink-0" onclick="jumpTo('cp-status')"><i class="fa-solid fa-gauge-high brand" aria-hidden="true"></i><span data-en="Rental Status" data-pl="Status Najmu">Rental Status</span></button>
+                <button type="button" class="btn btn-ghost btn-sm shrink-0" onclick="jumpTo('cp-damage')"><i class="fa-solid fa-car-burst brand" aria-hidden="true"></i><span data-en="Report Damage" data-pl="Zgłoszenie szkody">Report Damage</span></button>
+                <button type="button" class="btn btn-ghost btn-sm shrink-0" onclick="jumpTo('cp-service')"><i class="fa-solid fa-screwdriver-wrench brand" aria-hidden="true"></i><span data-en="Tires & Service" data-pl="Opony i Serwis">Tires & Service</span></button>
+                <button type="button" class="btn btn-ghost btn-sm shrink-0" onclick="jumpTo('cp-assistant')"><i class="fa-solid fa-comments brand" aria-hidden="true"></i><span data-en="Assistant" data-pl="Asystent">Assistant</span></button>
+                <button type="button" class="btn btn-ghost btn-sm shrink-0" onclick="openFullReport()"><i class="fa-solid fa-file-lines brand" aria-hidden="true"></i><span data-en="Full insurance claim" data-pl="Pełne zgłoszenie szkody">Full insurance claim</span></button>
+            </nav>
+
+            <div class="grid lg:grid-cols-12 gap-6 items-start">
+                <div class="lg:col-span-8 space-y-6">
+                    <!-- Rental Status -->
+                    <section id="cp-status" class="panel-card p-6 md:p-8" aria-labelledby="status-title">
+                        <div class="flex items-center justify-between gap-4 mb-8">
+                            <div class="flex items-center gap-3">
+                                <span class="w-11 h-11 rounded-2xl bg-brand/15 text-brand flex items-center justify-center"><i class="fa-solid fa-gauge-high" aria-hidden="true"></i></span>
+                                <h2 id="status-title" class="font-display font-bold text-2xl" data-en="Rental Status" data-pl="Status Najmu">Rental Status</h2>
+                            </div>
+                            <span class="chip bg-emerald-500/15 text-emerald-300"><span class="w-2 h-2 rounded-full bg-emerald-400"></span><span data-en="Active" data-pl="Aktywny">Active</span></span>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="bg-white/[0.03] rounded-3xl p-4 flex flex-col items-center text-center">
+                                <div class="relative w-28 h-28">
+                                    <svg viewBox="0 0 100 100" class="w-full h-full" aria-hidden="true"><circle cx="50" cy="50" r="42" fill="none" stroke-width="7" class="ring-track"/><circle id="ring-used" cx="50" cy="50" r="42" fill="none" stroke-width="7" class="ring-bar" stroke-dasharray="263.9" stroke-dashoffset="263.9"/></svg>
+                                    <span id="stat-days-passed" class="absolute inset-0 flex items-center justify-center font-display font-bold text-3xl">420</span>
+                                </div>
+                                <span class="mt-3 text-sm font-semibold text-zinc-400" data-en="Days used" data-pl="Dni minęło">Days used</span>
+                            </div>
+                            <div class="bg-white/[0.03] rounded-3xl p-4 flex flex-col items-center text-center">
+                                <div class="relative w-28 h-28">
+                                    <svg viewBox="0 0 100 100" class="w-full h-full" aria-hidden="true"><circle cx="50" cy="50" r="42" fill="none" stroke-width="7" class="ring-track"/><circle id="ring-left" cx="50" cy="50" r="42" fill="none" stroke-width="7" class="ring-bar muted" stroke-dasharray="263.9" stroke-dashoffset="263.9"/></svg>
+                                    <span id="stat-days-left" class="absolute inset-0 flex items-center justify-center font-display font-bold text-3xl">675</span>
+                                </div>
+                                <span class="mt-3 text-sm font-semibold text-zinc-400" data-en="Days left" data-pl="Dni zostało">Days left</span>
+                            </div>
+                            <div class="bg-white/[0.03] rounded-3xl p-4 flex flex-col items-center text-center">
+                                <div class="relative w-28 h-28">
+                                    <svg viewBox="0 0 100 100" class="w-full h-full" aria-hidden="true"><circle cx="50" cy="50" r="42" fill="none" stroke-width="7" class="ring-track"/><circle id="ring-km" cx="50" cy="50" r="42" fill="none" stroke-width="7" class="ring-bar" stroke-dasharray="263.9" stroke-dashoffset="263.9"/></svg>
+                                    <span id="km-left" class="absolute inset-0 flex items-center justify-center font-display font-bold text-3xl">--</span>
+                                </div>
+                                <span class="mt-3 text-sm font-semibold text-zinc-400" data-en="KM left" data-pl="Zostało KM">KM left</span>
+                            </div>
+                            <div class="bg-white/[0.03] rounded-3xl p-4 flex flex-col items-center text-center">
+                                <div class="relative w-28 h-28">
+                                    <svg viewBox="0 0 100 100" class="w-full h-full" aria-hidden="true"><circle cx="50" cy="50" r="42" fill="none" stroke-width="7" class="ring-track"/><circle id="ring-limit" cx="50" cy="50" r="42" fill="none" stroke-width="7" class="ring-bar muted" stroke-dasharray="263.9" stroke-dashoffset="263.9"/></svg>
+                                    <span id="stat-limit" class="absolute inset-0 flex items-center justify-center font-display font-bold text-3xl">45k</span>
+                                </div>
+                                <span class="mt-3 text-sm font-semibold text-zinc-400" data-en="KM limit" data-pl="Limit KM">KM limit</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-6">
+                            <div class="flex justify-between text-sm mb-2"><span class="text-zinc-400" data-en="Contract progress" data-pl="Postęp umowy">Contract progress</span><span id="contract-pct" class="font-semibold">38%</span></div>
+                            <div class="h-2 rounded-full bg-white/10 overflow-hidden"><div id="contract-bar" class="h-full bg-brand rounded-full transition-all duration-1000" style="width:0%"></div></div>
+                        </div>
+
+                        <div class="mt-6 p-4 md:p-5 bg-white/[0.03] rounded-3xl">
+                            <label for="mileage-input" class="label" data-en="Check your remaining kilometres" data-pl="Sprawdź pozostałe kilometry">Check your remaining kilometres</label>
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <input type="number" id="mileage-input" min="0" inputmode="numeric" data-en-ph="Current odometer (km)" data-pl-ph="Obecny stan licznika (km)" placeholder="Current odometer (km)" class="field flex-grow font-semibold" onkeydown="if(event.key==='Enter') calculateKM()">
+                                <button type="button" onclick="calculateKM()" class="btn btn-primary !min-h-[52px] shrink-0"><i class="fa-solid fa-calculator" aria-hidden="true"></i><span data-en="Calculate km" data-pl="Oblicz KM">Calculate km</span></button>
+                            </div>
+                            <p id="km-msg" class="text-sm mt-3 hidden" aria-live="polite"></p>
+                        </div>
+                    </section>
+
+                    <!-- Report Damage -->
+                    <section id="cp-damage" class="panel-card p-6 md:p-8" aria-labelledby="damage-title">
+                        <div class="flex flex-wrap items-start justify-between gap-4 mb-8">
+                            <div class="flex items-center gap-3">
+                                <span class="w-11 h-11 rounded-2xl bg-brand/15 text-brand flex items-center justify-center"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i></span>
+                                <div>
+                                    <h2 id="damage-title" class="font-display font-bold text-2xl" data-en="Report Damage" data-pl="Zgłoszenie szkody">Report Damage</h2>
+                                    <p class="text-sm text-zinc-400" data-en="No calls, no emails — about 60 seconds." data-pl="Bez telefonów i maili — około 60 sekund.">No calls, no emails — about 60 seconds.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <ol class="space-y-8">
+                            <li>
+                                <p class="flex items-center gap-3 mb-3"><span class="w-7 h-7 rounded-full bg-white text-ink text-sm font-bold flex items-center justify-center">1</span><span class="font-semibold" data-en="Select vehicle type" data-pl="Wybierz typ pojazdu">Select vehicle type</span></p>
+                                <div class="seg" role="group" aria-label="Vehicle type">
+                                    <button type="button" id="btn-sedan" onclick="panelViewer.changeCar('sedan')" class="bg-brand">Sedan</button>
+                                    <button type="button" id="btn-suv" onclick="panelViewer.changeCar('suv')" class="bg-zinc-800" data-en="SUV / Wagon" data-pl="SUV / Kombi">SUV / Wagon</button>
+                                    <button type="button" id="btn-hatchback" onclick="panelViewer.changeCar('hatchback')" class="bg-zinc-800">Hatchback</button>
+                                </div>
+                            </li>
+
+                            <li>
+                                <div class="flex justify-between items-center mb-3 gap-3">
+                                    <p class="flex items-center gap-3"><span class="w-7 h-7 rounded-full bg-white text-ink text-sm font-bold flex items-center justify-center">2</span><span class="font-semibold" data-en="Mark the damage" data-pl="Zaznacz uszkodzenie">Mark the damage</span></p>
+                                    <span class="chip bg-white/5 border border-white/10 text-zinc-300"><i class="fa-solid fa-location-dot brand" aria-hidden="true"></i><span data-en="Pins:" data-pl="Pinezki:">Pins:</span> <span id="pin-count" class="brand font-bold" aria-live="polite">0</span></span>
+                                </div>
+                                <div id="car-3d-container" class="relative w-full h-[350px] md:h-[450px] bg-[#0a0a0a] rounded-3xl border border-white/10 overflow-hidden cursor-move">
+                                    <div class="absolute top-4 left-1/2 -translate-x-1/2 w-max max-w-[92%] bg-black/70 backdrop-blur-md border border-white/10 text-white px-4 py-2 rounded-full text-xs md:text-sm flex items-center gap-2 pointer-events-none z-10 shadow-lg">
+                                        <i class="fa-solid fa-hand-pointer brand" aria-hidden="true"></i><span data-en="Rotate the model and click the damaged spot to drop a pin." data-pl="Obróć model i kliknij w miejsce szkody, aby postawić pinezkę.">Rotate the model and click the damaged spot to drop a pin.</span>
+                                    </div>
+                                    <div id="front-label" class="absolute top-0 left-0 bg-[#ff5f00]/20 border border-[#ff5f00]/50 text-[#ff5f00] text-xs font-bold px-2 py-1 rounded pointer-events-none uppercase tracking-wider backdrop-blur-md z-20" style="display:none;" data-en="Front" data-pl="Przód">Front</div>
+                                    <div id="back-label" class="absolute top-0 left-0 bg-[#ff5f00]/20 border border-[#ff5f00]/50 text-[#ff5f00] text-xs font-bold px-2 py-1 rounded pointer-events-none uppercase tracking-wider backdrop-blur-md z-20" style="display:none;" data-en="Rear" data-pl="Tył">Rear</div>
+                                </div>
+                                <p id="pin-error" class="hidden mt-3 text-sm font-semibold text-red-300 bg-red-500/10 border border-red-500/30 rounded-2xl px-4 py-3" role="alert"></p>
+                            </li>
+
+                            <li>
+                                <form id="damage-form" onsubmit="submitDamageReport(event)" class="space-y-8">
+                                    <div>
+                                        <p class="flex items-center gap-3 mb-3"><span class="w-7 h-7 rounded-full bg-white text-ink text-sm font-bold flex items-center justify-center">3</span><span class="font-semibold" data-en="Add photos" data-pl="Dodaj zdjęcia">Add photos</span><span class="text-sm text-zinc-500" data-en="(optional)" data-pl="(opcjonalnie)">(optional)</span></p>
+                                        <label for="damage-photos" id="dropzone" class="dropzone">
+                                            <span class="w-12 h-12 rounded-full bg-brand/15 text-brand flex items-center justify-center text-lg mb-1"><i class="fa-solid fa-camera" aria-hidden="true"></i></span>
+                                            <span class="font-semibold"><span data-en="Drop photos here or" data-pl="Upuść zdjęcia tutaj lub">Drop photos here or</span> <span class="brand underline underline-offset-4" data-en="browse" data-pl="wybierz">browse</span></span>
+                                            <span class="text-sm text-zinc-500" data-en="JPG, PNG or HEIC · up to 8 photos" data-pl="JPG, PNG lub HEIC · do 8 zdjęć">JPG, PNG or HEIC · up to 8 photos</span>
+                                        </label>
+                                        <input type="file" id="damage-photos" accept="image/*" multiple class="sr-only" onchange="addPhotos(this.files); this.value='';">
+                                        <div id="photo-grid" class="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-3 empty:hidden"></div>
+                                    </div>
+                                    <div>
+                                        <label for="damage-desc" class="flex items-center gap-3 mb-3"><span class="w-7 h-7 rounded-full bg-white text-ink text-sm font-bold flex items-center justify-center">4</span><span class="font-semibold" data-en="Damage description" data-pl="Opis uszkodzenia">Damage description</span></label>
+                                        <textarea id="damage-desc" required data-en-ph="e.g. a ~5 cm scratch on the left front fender..." data-pl-ph="Np. zarysowanie na lewym błotniku o długości ok. 5 cm..." placeholder="e.g. a ~5 cm scratch on the left front fender..." class="field min-h-[130px] resize-y"></textarea>
+                                    </div>
+                                    <div class="flex flex-col-reverse sm:flex-row gap-3">
+                                        <button type="button" onclick="openFullReport()" class="btn btn-ghost btn-lg sm:w-1/2"><i class="fa-solid fa-file-lines" aria-hidden="true"></i><span data-en="Make a full report" data-pl="Zrób pełne zgłoszenie">Make a full report</span></button>
+                                        <button id="damage-submit" type="submit" class="btn btn-primary btn-lg sm:w-1/2"><i class="fa-solid fa-upload" aria-hidden="true"></i><span data-en="Quick submit" data-pl="Szybkie zgłoszenie">Quick submit</span></button>
+                                    </div>
+                                </form>
+                            </li>
+                        </ol>
+                    </section>
+                </div>
+
+                <div class="lg:col-span-4 space-y-6">
+                    <!-- Tires & Service -->
+                    <section id="cp-service" class="panel-card p-6 md:p-7" aria-labelledby="service-title">
+                        <div class="flex items-center gap-3 mb-5">
+                            <span class="w-11 h-11 rounded-2xl bg-brand/15 text-brand flex items-center justify-center"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i></span>
+                            <h2 id="service-title" class="font-display font-bold text-2xl" data-en="Tires & Service" data-pl="Opony i Serwis">Tires & Service</h2>
+                        </div>
+                        <div class="seg mb-4" role="group" aria-label="Service type">
+                            <button type="button" id="svc-tyres" class="bg-brand" onclick="setSvcType('tyres')" data-en="Tyre change" data-pl="Wymiana opon">Tyre change</button>
+                            <button type="button" id="svc-service" class="bg-zinc-800" onclick="setSvcType('service')" data-en="Service" data-pl="Serwis">Service</button>
+                        </div>
+                        <div class="mb-4 relative w-full h-[240px] bg-[#111] rounded-2xl overflow-hidden border border-white/10 z-0">
+                            <div id="leaflet-service-map" class="w-full h-full relative z-0" role="region" aria-label="Map of partner workshops"></div>
+                        </div>
+                        <div id="service-points" class="space-y-3"></div>
+                    </section>
+
+                    <!-- Assistant -->
+                    <section id="cp-assistant" class="panel-card p-5 md:p-6 flex flex-col h-[600px]" aria-labelledby="assistant-title">
+                        <div class="flex items-center gap-3 pb-4 mb-4 border-b border-white/10">
+                            <span class="relative w-11 h-11 rounded-full bg-brand text-ink flex items-center justify-center"><i class="fa-solid fa-bolt" aria-hidden="true"></i><span class="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-400 ring-2 ring-ink-2"></span></span>
+                            <div>
+                                <h2 id="assistant-title" class="font-bold text-lg leading-tight">VOLTA Assistant</h2>
+                                <p class="text-xs text-zinc-400" data-en="Online · replies instantly" data-pl="Online · odpowiada od razu">Online · replies instantly</p>
+                            </div>
+                        </div>
+                        <div id="chat-messages" class="flex-grow overflow-y-auto space-y-3 mb-3 no-scrollbar flex flex-col" aria-live="polite">
+                            <div class="bubble bubble-bot" data-en="Hi! I'm your VOLTA assistant. How can I help? Analyzing your contract with AI..." data-pl="Cześć! Jestem Twoim asystentem VOLTA. W czym mogę pomóc? Analizuję Twoją umowę z pomocą AI...">Hi! I'm your VOLTA assistant. How can I help? Analyzing your contract with AI...</div>
+                        </div>
+                        <div id="chat-chips" class="flex gap-2 overflow-x-auto no-scrollbar mb-3"></div>
+                        <div class="relative">
+                            <label for="chat-input" class="sr-only" data-en="Message the assistant" data-pl="Napisz do asystenta">Message the assistant</label>
+                            <input type="text" id="chat-input" data-en-ph="Ask a question..." data-pl-ph="Zadaj pytanie..." placeholder="Ask a question..." class="field !rounded-full pr-14" onkeydown="if(event.key==='Enter') sendChat()">
+                            <button type="button" onclick="sendChat()" class="icon-btn absolute right-1 top-1/2 -translate-y-1/2 bg-brand text-ink hover:bg-brand-400" data-en-aria="Send message" data-pl-aria="Wyślij wiadomość" aria-label="Send message"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i></button>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FULL REPORT (insurance claim) -->
+    <div id="full-report-page" class="page-section pt-28 md:pt-36 pb-24 bg-ink min-h-screen">
+        <div class="max-w-5xl mx-auto px-5 md:px-8">
+            <button type="button" onclick="showPage('client-panel')" class="inline-flex items-center gap-2 text-zinc-400 hover:text-white font-semibold mb-6"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i><span data-en="Back to Client Panel" data-pl="Wróć do Panelu Klienta">Back to Client Panel</span></button>
+
+            <div class="panel-card p-6 md:p-10 mb-4">
+                <div class="flex flex-col lg:flex-row justify-between items-start gap-8">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-brand/10 border border-brand/30 px-4 py-3 rounded-2xl text-center">
+                            <div class="text-xl font-black italic leading-none tracking-tighter">VOL<span class="brand">TA</span></div>
+                            <div class="text-[10px] uppercase tracking-widest text-zinc-400 mt-1" data-en="Insurance" data-pl="Ubezpieczenia">Insurance</div>
+                        </div>
+                        <div>
+                            <h1 class="font-display font-extrabold text-3xl md:text-4xl leading-none" data-en="Motor Damage Claim" data-pl="Zgłoszenie szkody komunikacyjnej">Motor Damage Claim</h1>
+                            <p class="text-zinc-400 text-sm mt-2" data-en="Interactive digital form" data-pl="Interaktywny formularz cyfrowy">Interactive digital form</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full lg:w-auto lg:min-w-[520px]">
+                        <div class="field-group"><span class="damage-form-label" data-en="Insurance type" data-pl="Rodzaj ubezpieczenia">Insurance type</span>
+                            <div class="flex gap-2"><label class="choice"><input type="checkbox"> AC</label><label class="choice"><input type="checkbox"> OC</label></div>
+                        </div>
+                        <div class="field-group"><label for="claim-policy" class="damage-form-label" data-en="Policy no." data-pl="Nr polisy">Policy no.</label><input id="claim-policy" type="text" class="damage-input"></div>
+                        <div class="field-group"><label for="claim-no" class="damage-form-label" data-en="Claim no." data-pl="Numer szkody">Claim no.</label><input id="claim-no" type="text" class="damage-input" data-en-ph="(assigned by insurer)" data-pl-ph="(nadaje ubezpieczyciel)" placeholder="(assigned by insurer)" disabled></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sticky progress -->
+            <div class="sticky top-[76px] md:top-[88px] z-30 mb-4">
+                <div class="rounded-2xl bg-ink-3/90 backdrop-blur-xl border border-white/10 px-4 py-3 flex items-center gap-4">
+                    <span id="claim-step" class="text-sm font-bold brand shrink-0 tabular-nums">1 / 14</span>
+                    <div class="flex-grow min-w-0">
+                        <p id="claim-step-label" class="text-xs font-semibold text-zinc-300 truncate mb-1.5"></p>
+                        <div class="h-1.5 rounded-full bg-white/10 overflow-hidden"><div id="claim-bar" class="h-full bg-brand rounded-full transition-all duration-500" style="width:7%"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <form id="full-claim-form" class="space-y-4" onsubmit="submitFullReport(event)">
+
+                <section class="claim-section">
+                <div class="section-header" data-en="I. INJURED PARTY (OWNER OF THE DAMAGED VEHICLE)" data-pl="I. POSZKODOWANY (POSIADACZ USZKODZONEGO POJAZDU)">I. INJURED PARTY (OWNER OF THE DAMAGED VEHICLE)</div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="field-group md:col-span-2"><label class="damage-form-label" data-en="Company name / Full name" data-pl="Pełna nazwa firmy / Imię i Nazwisko">Company name / Full name</label><input type="text" class="damage-input" autocomplete="name"></div>
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 md:col-span-2">
+                        <div class="col-span-2 field-group"><label class="damage-form-label" data-en="Street" data-pl="Ulica">Street</label><input type="text" class="damage-input" autocomplete="address-line1"></div>
+                        <div class="field-group"><label class="damage-form-label" data-en="Building no." data-pl="Nr domu">Building no.</label><input type="text" class="damage-input"></div>
+                        <div class="field-group"><label class="damage-form-label" data-en="Unit no." data-pl="Nr lokalu">Unit no.</label><input type="text" class="damage-input"></div>
+                        <div class="field-group col-span-2 sm:col-span-1"><label class="damage-form-label" data-en="Postcode" data-pl="Kod">Postcode</label><input type="text" class="damage-input" placeholder="00-000" autocomplete="postal-code"></div>
+                    </div>
+                    <div class="field-group"><label class="damage-form-label" data-en="City" data-pl="Miejscowość">City</label><input type="text" class="damage-input" autocomplete="address-level2"></div>
+                    <div class="field-group"><label class="damage-form-label" data-en="National ID / Tax ID" data-pl="PESEL / NIP">National ID / Tax ID</label><input type="text" class="damage-input"></div>
+                    <div class="field-group"><label class="damage-form-label" data-en="Phone" data-pl="Telefon">Phone</label><input type="tel" class="damage-input" autocomplete="tel"></div>
+                    <div class="field-group"><label class="damage-form-label" data-en="Email" data-pl="Adres e-mail">Email</label><input type="email" class="damage-input" autocomplete="email"></div>
+                </div>
+                </section>
+
+                <section class="claim-section">
+                <div class="section-header" data-en="II. DRIVER (IF DIFFERENT FROM OWNER)" data-pl="II. KIERUJĄCY POJAZDEM (JEŻELI BYŁ INNY NIŻ POSIADACZ)">II. DRIVER (IF DIFFERENT FROM OWNER)</div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="field-group md:col-span-2"><label class="damage-form-label" data-en="Full name" data-pl="Imię i Nazwisko">Full name</label><input type="text" class="damage-input"></div>
+                    <div class="field-group"><label class="damage-form-label" data-en="City" data-pl="Miejscowość">City</label><input type="text" class="damage-input"></div>
+                    <div class="field-group"><label class="damage-form-label" data-en="National ID / Tax ID" data-pl="PESEL / NIP">National ID / Tax ID</label><input type="text" class="damage-input"></div>
+                    <div class="md:col-span-2 grid md:grid-cols-2 gap-4 items-end">
+                        <div>
+                            <p class="q-text mb-3" data-en="Did the driver hold a valid licence for the vehicle?" data-pl="Czy kierujący posiadał uprawnienia do kierowania pojazdem?">Did the driver hold a valid licence for the vehicle?</p>
+                            <div class="flex flex-wrap gap-2">
+                                <label class="choice"><input type="radio" name="licence"> <span data-en="Yes" data-pl="Tak">Yes</span></label>
+                                <label class="choice"><input type="radio" name="licence"> <span data-en="No" data-pl="Nie">No</span></label>
+                            </div>
+                        </div>
+                        <div class="field-group"><label class="damage-form-label" data-en="Driver's licence categories held" data-pl="Posiadane kategorie prawa jazdy">Driver's licence categories held</label><input type="text" class="damage-input"></div>
+                    </div>
+                </div>
+                </section>
+
+                <section class="claim-section">
+                <div class="section-header" data-en="III. DETAILS OF THE DAMAGED VEHICLE" data-pl="III. DANE POJAZDU, KTÓRY ULEGŁ SZKODZIE">III. DETAILS OF THE DAMAGED VEHICLE</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    <div class="field-group"><label for="claim-make" class="damage-form-label" data-en="Make and model" data-pl="Marka i model">Make and model</label><input id="claim-make" type="text" class="damage-input"></div>
+                    <div class="field-group"><label for="claim-body" class="damage-form-label" data-en="Body type" data-pl="Rodzaj nadwozia">Body type</label><input id="claim-body" type="text" class="damage-input"></div>
+                    <div class="field-group"><label for="claim-reg" class="damage-form-label" data-en="Registration number" data-pl="Numer rejestracyjny">Registration number</label><input id="claim-reg" type="text" class="damage-input"></div>
+                    <div class="field-group"><label for="claim-mileage" class="damage-form-label" data-en="Mileage" data-pl="Przebieg pojazdu">Mileage</label><input id="claim-mileage" type="text" class="damage-input"></div>
+                    <div class="field-group"><label class="damage-form-label" data-en="Year of manufacture" data-pl="Rok produkcji">Year of manufacture</label><input type="text" class="damage-input" inputmode="numeric"></div>
+                    <div class="flex flex-col gap-2">
+                        <span class="damage-form-label" data-en="Was the vehicle towed?" data-pl="Czy pojazd był holowany?">Was the vehicle towed?</span>
+                        <div class="flex gap-2"><label class="choice"><input type="radio" name="towed"> <span data-en="Yes" data-pl="Tak">Yes</span></label><label class="choice"><input type="radio" name="towed"> <span data-en="No" data-pl="Nie">No</span></label></div>
+                    </div>
+                    <div class="sm:col-span-2 md:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6 bg-white/[0.03] p-5 rounded-2xl">
+                        <div class="field-group">
+                            <span class="damage-form-label" data-en="The vehicle is subject to:" data-pl="Pojazd jest przedmiotem:">The vehicle is subject to:</span>
+                            <div class="flex flex-wrap gap-2">
+                                <label class="choice"><input type="checkbox"> <span data-en="Loan" data-pl="Kredytu">Loan</span></label>
+                                <label class="choice"><input type="checkbox"> <span data-en="Co-ownership" data-pl="Współwłasności">Co-ownership</span></label>
+                                <label class="choice"><input type="checkbox"> <span data-en="Leasing" data-pl="Leasingu">Leasing</span></label>
+                                <label class="choice"><input type="checkbox"> <span data-en="Other" data-pl="Inne">Other</span></label>
+                            </div>
+                        </div>
+                        <div class="field-group">
+                            <span class="damage-form-label" data-en="Vehicle use:" data-pl="Przeznaczenie pojazdu:">Vehicle use:</span>
+                            <div class="flex flex-wrap gap-2">
+                                <label class="choice"><input type="radio" name="vehicle_use"> <span data-en="Private" data-pl="Prywatny">Private</span></label>
+                                <label class="choice"><input type="radio" name="vehicle_use"> <span data-en="Business" data-pl="Firmowy">Business</span></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sm:col-span-2 md:col-span-3 border-t border-white/5 pt-4">
+                        <p class="q-text mb-3" data-en="Did the vehicle have unrepaired damage before this claim – what?" data-pl="Czy przed zgłaszaną szkodą pojazd miał nienaprawione uszkodzenia - jakie?">Did the vehicle have unrepaired damage before this claim – what?</p>
+                        <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
+                            <div class="flex gap-2 shrink-0">
+                                <label class="choice"><input type="radio" name="old_dmg"> <span data-en="Yes" data-pl="Tak">Yes</span></label>
+                                <label class="choice"><input type="radio" name="old_dmg"> <span data-en="No" data-pl="Nie">No</span></label>
+                            </div>
+                            <input type="text" class="damage-input flex-grow" data-en-ph="Describe..." data-pl-ph="Wpisz jakie..." placeholder="Describe..." aria-label="Describe earlier damage">
+                        </div>
+                    </div>
+                </div>
+                </section>
+
+                <section class="claim-section">
+                <div class="section-header" data-en="IV. DATE AND PLACE OF THE INCIDENT" data-pl="IV. DATA I MIEJSCE WYSTĄPIENIA SZKODY">IV. DATE AND PLACE OF THE INCIDENT</div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="field-group"><label class="damage-form-label" data-en="Date and time (DD.MM.YYYY HH:MM)" data-pl="Data i godzina (DD.MM.RRRR GG:MM)">Date and time (DD.MM.YYYY HH:MM)</label><input type="datetime-local" class="damage-input"></div>
+                    <div class="field-group"><label class="damage-form-label" data-en="City, street, intersection or road section" data-pl="Miejscowość, ulica, skrzyżowanie lub odcinek drogi">City, street, intersection or road section</label><input type="text" class="damage-input"></div>
+                </div>
+                </section>
+
+                <section class="claim-section">
+                <div class="section-header" data-en="V. LIST OF DAMAGED (STOLEN) PARTS" data-pl="V. WYKAZ ELEMENTÓW USZKODZONYCH (SKRADZIONYCH)">V. LIST OF DAMAGED (STOLEN) PARTS</div>
+                <div class="field-group"><textarea id="claim-parts" class="damage-input min-h-[90px]" data-en-ph="Describe the damage..." data-pl-ph="Opisz uszkodzenia..." placeholder="Describe the damage..." aria-label="List of damaged parts"></textarea></div>
+                </section>
+
+                <section class="claim-section">
+                <div class="section-header" data-en="VI. SECOND PARTY (VEHICLE OWNER)" data-pl="VI. DRUGI UCZESTNIK ZDARZENIA (POSIADACZ POJAZDU)">VI. SECOND PARTY (VEHICLE OWNER)</div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="field-group md:col-span-2"><label class="damage-form-label" data-en="Company name / Full name" data-pl="Pełna nazwa firmy / Imię i Nazwisko">Company name / Full name</label><input type="text" class="damage-input"></div>
+                    <div class="field-group"><label class="damage-form-label" data-en="Phone" data-pl="Telefon">Phone</label><input type="tel" class="damage-input"></div>
+                    <div class="field-group"><label class="damage-form-label" data-en="Email" data-pl="Adres e-mail">Email</label><input type="email" class="damage-input"></div>
+                </div>
+                </section>
+
+                <section class="claim-section">
+                <div class="section-header" data-en="VII. DETAILS OF THE SECOND VEHICLE" data-pl="VII. DANE DRUGIEGO POJAZDU">VII. DETAILS OF THE SECOND VEHICLE</div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="field-group"><label class="damage-form-label" data-en="Make and model" data-pl="Marka i model">Make and model</label><input type="text" class="damage-input"></div>
+                    <div class="field-group"><label class="damage-form-label" data-en="Registration number" data-pl="Numer rejestracyjny">Registration number</label><input type="text" class="damage-input"></div>
+                    <div class="field-group"><label class="damage-form-label" data-en="Third-party (OC) insurer and policy no." data-pl="Ubezpieczyciel OC i numer polisy">Third-party (OC) insurer and policy no.</label><input type="text" class="damage-input"></div>
+                    <div class="md:col-span-3 pt-2">
+                        <p class="q-text mb-3" data-en="Was the driver under the influence of alcohol or similar substances?" data-pl="Czy kierujący był pod wpływem alkoholu lub podobnych środków?">Was the driver under the influence of alcohol or similar substances?</p>
+                        <div class="flex flex-wrap gap-2">
+                            <label class="choice"><input type="radio" name="alc2"> <span data-en="Yes" data-pl="Tak">Yes</span></label>
+                            <label class="choice"><input type="radio" name="alc2"> <span data-en="No" data-pl="Nie">No</span></label>
+                            <label class="choice"><input type="radio" name="alc2"> <span data-en="Don't know" data-pl="Nie wiem">Don't know</span></label>
+                        </div>
+                    </div>
+                </div>
+                </section>
+
+                <section class="claim-section">
+                <div class="section-header" data-en="VIII. ADDITIONAL QUESTIONS" data-pl="VIII. PYTANIA DODATKOWE">VIII. ADDITIONAL QUESTIONS</div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="field-group md:col-span-2"><label class="damage-form-label" data-en="How many vehicles were involved?" data-pl="Ile pojazdów uczestniczyło w zdarzeniu?">How many vehicles were involved?</label><input type="number" min="1" class="damage-input !w-28"></div>
+                    <div class="field-group">
+                        <span class="damage-form-label" data-en="Was any property outside the vehicles damaged?" data-pl="Czy uszkodzone zostało mienie poza pojazdami?">Was any property outside the vehicles damaged?</span>
+                        <div class="flex gap-2 mb-3"><label class="choice"><input type="radio" name="prop_out"> <span data-en="Yes" data-pl="Tak">Yes</span></label><label class="choice"><input type="radio" name="prop_out"> <span data-en="No" data-pl="Nie">No</span></label></div>
+                        <input type="text" class="damage-input" data-en-ph="What property and whose was it?" data-pl-ph="Jakie mienie i do kogo należało?" placeholder="What property and whose was it?" aria-label="Property outside the vehicles">
+                    </div>
+                    <div class="field-group">
+                        <span class="damage-form-label" data-en="Was any property inside the vehicle damaged?" data-pl="Czy uszkodzone zostało mienie w pojeździe?">Was any property inside the vehicle damaged?</span>
+                        <div class="flex gap-2 mb-3"><label class="choice"><input type="radio" name="prop_in"> <span data-en="Yes" data-pl="Tak">Yes</span></label><label class="choice"><input type="radio" name="prop_in"> <span data-en="No" data-pl="Nie">No</span></label></div>
+                        <input type="text" class="damage-input" data-en-ph="What property and whose was it?" data-pl-ph="Jakie mienie i do kogo należało?" placeholder="What property and whose was it?" aria-label="Property inside the vehicle">
+                    </div>
+                </div>
+                </section>
+
+                <section class="claim-section">
+                <div class="section-header" data-en="IX. POLICE NOTIFICATION" data-pl="IX. POWIADOMIENIE POLICJI">IX. POLICE NOTIFICATION</div>
+                <div class="grid grid-cols-1 gap-4">
+                    <div>
+                        <p class="q-text mb-3" data-en="Were the police notified?" data-pl="Czy powiadomiono policję?">Were the police notified?</p>
+                        <div class="flex gap-2">
+                            <label class="choice"><input type="radio" name="police"> <span data-en="Yes" data-pl="Tak">Yes</span></label>
+                            <label class="choice"><input type="radio" name="police"> <span data-en="No" data-pl="Nie">No</span></label>
+                        </div>
+                    </div>
+                    <div class="field-group"><label class="damage-form-label" data-en="Name, address and phone of the notified police unit" data-pl="Nazwa, adres i telefon jednostki policji">Name, address and phone of the notified police unit</label><input type="text" class="damage-input"></div>
+                </div>
+                </section>
+
+                <section class="claim-section">
+                <div class="section-header" data-en="X. WITNESSES (NAME, ADDRESS, PHONE)" data-pl="X. ŚWIADKOWIE (IMIĘ, ADRES, TELEFON)">X. WITNESSES (NAME, ADDRESS, PHONE)</div>
+                <div class="field-group"><textarea class="damage-input min-h-[90px]" aria-label="Witnesses"></textarea></div>
+                </section>
+
+                <section class="claim-section">
+                <div class="section-header" data-en="XI. DETAILED DESCRIPTION OF THE CIRCUMSTANCES" data-pl="XI. SZCZEGÓŁOWY OPIS OKOLICZNOŚCI">XI. DETAILED DESCRIPTION OF THE CIRCUMSTANCES</div>
+                <div class="field-group">
+                    <label class="damage-form-label" data-en="Collision: cause, sequence, parties' behaviour. Theft: method of break-in, circumstances." data-pl="Kolizja: przyczyna, przebieg, zachowanie uczestników. Kradzież: sposób włamania, okoliczności.">Collision: cause, sequence, parties' behaviour. Theft: method of break-in, circumstances.</label>
+                    <textarea class="damage-input min-h-[130px]"></textarea>
+                </div>
+                </section>
+
+                <section class="claim-section">
+                <div class="section-header" data-en="XII. SITUATION SKETCH (3D MODEL WITH PINS)" data-pl="XII. SZKIC SYTUACYJNY (MODEL 3D Z PINEZKAMI)">XII. SITUATION SKETCH (3D MODEL WITH PINS)</div>
+                <div class="flex flex-col sm:flex-row gap-3 mb-4 justify-between sm:items-center">
+                    <div class="seg sm:w-[420px]" role="group" aria-label="Vehicle type">
+                        <button type="button" onclick="reportViewer.changeCar('sedan')" id="rbtn-sedan" class="bg-brand">Sedan</button>
+                        <button type="button" onclick="reportViewer.changeCar('suv')" id="rbtn-suv" class="bg-zinc-800" data-en="SUV / Wagon" data-pl="SUV / Kombi">SUV / Wagon</button>
+                        <button type="button" onclick="reportViewer.changeCar('hatchback')" id="rbtn-hatchback" class="bg-zinc-800">Hatchback</button>
+                    </div>
+                    <span class="chip bg-white/5 border border-white/10 text-zinc-300 w-fit"><i class="fa-solid fa-location-dot brand" aria-hidden="true"></i><span data-en="Pins:" data-pl="Pinezki:">Pins:</span> <span id="report-pin-count" class="brand font-bold" aria-live="polite">0</span></span>
+                </div>
+                <div id="report-3d-container" class="w-full h-[360px] md:h-[450px] bg-[#0a0a0a] rounded-3xl border border-white/10 overflow-hidden cursor-crosshair relative">
+                    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 w-max max-w-[92%] text-center text-xs text-white/75 bg-black/80 px-4 py-2 rounded-full z-10 pointer-events-none" data-en="Rotate and click the white model to mark the damage." data-pl="Obróć i kliknij w biały model, aby wskazać uszkodzenie.">Rotate and click the white model to mark the damage.</div>
+                    <div id="report-front-label" class="absolute top-0 left-0 bg-[#ff5f00]/20 border border-[#ff5f00]/50 text-[#ff5f00] text-xs font-bold px-2 py-1 rounded pointer-events-none uppercase tracking-wider backdrop-blur-md z-20" style="display:none;" data-en="Front" data-pl="Przód">Front</div>
+                    <div id="report-back-label" class="absolute top-0 left-0 bg-[#ff5f00]/20 border border-[#ff5f00]/50 text-[#ff5f00] text-xs font-bold px-2 py-1 rounded pointer-events-none uppercase tracking-wider backdrop-blur-md z-20" style="display:none;" data-en="Rear" data-pl="Tył">Rear</div>
+                </div>
+                </section>
+
+                <section class="claim-section">
+                <div class="section-header" data-en="XIII. DID ANYONE SUFFER BODILY INJURY?" data-pl="XIII. CZY UCZESTNICY DOZNALI OBRAŻEŃ CIAŁA?">XIII. DID ANYONE SUFFER BODILY INJURY?</div>
+                <div class="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-6 md:items-end">
+                    <div class="flex gap-2"><label class="choice"><input type="radio" name="injury"> <span data-en="Yes" data-pl="Tak">Yes</span></label><label class="choice"><input type="radio" name="injury"> <span data-en="No" data-pl="Nie">No</span></label></div>
+                    <div class="field-group"><label class="damage-form-label" data-en="Who was injured (name, address, phone, type of injury)?" data-pl="Kto doznał obrażeń (imię, adres, tel, rodzaj obrażeń)?">Who was injured (name, address, phone, type of injury)?</label><input type="text" class="damage-input"></div>
+                </div>
+                </section>
+
+                <section class="claim-section">
+                <div class="section-header" data-en="XIV. DECLARATIONS (CONFIRM EACH BELOW)" data-pl="XIV. OŚWIADCZENIA (POTWIERDŹ KAŻDE PONIŻEJ)">XIV. DECLARATIONS (CONFIRM EACH BELOW)</div>
+                <div class="space-y-3">
+                    <label class="declaration-item flex gap-3 cursor-pointer items-start p-3 rounded-xl hover:bg-white/[0.03]">
+                        <input type="checkbox" required class="mt-1">
+                        <span data-en="1. I declare that I have not received, and am not seeking, compensation for this claim from any other insurer." data-pl="1. Oświadczam, że nie otrzymałem odszkodowania za tę szkodę z innego towarzystwa ubezpieczeń ani nie czynię starań, aby je uzyskać.">1. I declare that I have not received, and am not seeking, compensation for this claim from any other insurer.</span>
+                    </label>
+                    <label class="declaration-item flex gap-3 cursor-pointer items-start p-3 rounded-xl hover:bg-white/[0.03]">
+                        <input type="checkbox" required class="mt-1">
+                        <span data-en="2. I declare that the damaged vehicle was comprehensively insured (AC) with only one insurer (applies to comprehensive claims only)." data-pl="2. Oświadczam, że uszkodzony pojazd był ubezpieczony w zakresie AC tylko w jednym zakładzie ubezpieczeń (dotyczy szkód z AC).">2. I declare that the damaged vehicle was comprehensively insured (AC) with only one insurer (applies to comprehensive claims only).</span>
+                    </label>
+                    <label class="declaration-item flex gap-3 cursor-pointer items-start p-3 rounded-xl hover:bg-white/[0.03]">
+                        <input type="checkbox" required class="mt-1">
+                        <span data-en="3. I declare that if the Insurer's investigation shows grounds excluding liability, or does not confirm the stated circumstances or extent of the damage, I undertake to return any compensation paid within 14 days of demand." data-pl="3. Oświadczam, że jeśli postępowanie Ubezpieczyciela wykaże okoliczności wyłączające odpowiedzialność lub nie potwierdzi podanych okoliczności lub rozmiaru szkody, zobowiązuję się zwrócić wypłacone odszkodowanie w terminie 14 dni od wezwania.">3. I declare that if the Insurer's investigation shows grounds excluding liability, or does not confirm the stated circumstances or extent of the damage, I undertake to return any compensation paid within 14 days of demand.</span>
+                    </label>
+                    <label class="declaration-item flex gap-3 cursor-pointer items-start p-3 rounded-xl hover:bg-white/[0.03]">
+                        <input type="checkbox" required class="mt-1">
+                        <span data-en="4. I declare that the driver used the vehicle with my knowledge and consent." data-pl="4. Oświadczam, że kierujący pojazdem użytkował go za moją wiedzą i zgodą.">4. I declare that the driver used the vehicle with my knowledge and consent.</span>
+                    </label>
+                    <div class="declaration-item border border-brand/40 bg-brand/[0.06] p-5 rounded-2xl">
+                        <p class="font-bold brand mb-3" data-en="5. DRIVER'S DECLARATION AT THE TIME OF THE COLLISION / ACCIDENT" data-pl="5. OŚWIADCZENIE KIERUJĄCEGO W MOMENCIE KOLIZJI / WYPADKU">5. DRIVER'S DECLARATION AT THE TIME OF THE COLLISION / ACCIDENT</p>
+                        <label class="flex items-center gap-3 mb-4 cursor-pointer"><input type="checkbox" required> <span data-en="I confirm the sobriety declaration below:" data-pl="Potwierdzam poniższe oświadczenie o trzeźwości:">I confirm the sobriety declaration below:</span></label>
+                        <div class="flex flex-col md:flex-row flex-wrap gap-3 md:items-center md:ml-8">
+                            <span data-en="I declare that while driving at the time of the incident I" data-pl="Oświadczam, że prowadząc pojazd w chwili zdarzenia">I declare that while driving at the time of the incident I</span>
+                            <div class="flex gap-2">
+                                <label class="choice font-bold"><input type="radio" name="sobriety" required> <span data-en="WAS NOT" data-pl="NIE BYŁEM/-AM">WAS NOT</span></label>
+                                <label class="choice font-bold"><input type="radio" name="sobriety" required> <span data-en="WAS" data-pl="BYŁEM/-AM">WAS</span></label>
+                            </div>
+                            <span data-en="under the influence of alcohol or similar substances." data-pl="w stanie pod wpływem alkoholu lub podobnie działających środków.">under the influence of alcohol or similar substances.</span>
+                        </div>
+                    </div>
+                </div>
+                </section>
+
+                <div class="pt-6 flex flex-col-reverse sm:flex-row gap-3">
+                    <button type="button" onclick="showPage('client-panel')" class="btn btn-ghost btn-lg sm:w-1/3"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i><span data-en="Back" data-pl="Wróć">Back</span></button>
+                    <button type="submit" id="full-report-submit" class="btn btn-primary btn-lg sm:w-2/3"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i><span data-en="Submit claim" data-pl="Wyślij zgłoszenie">Submit claim</span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+    </main>
+
+    <!-- Damage report summary -->
+    <dialog id="report-dialog" class="bg-transparent p-0 m-auto w-[min(560px,calc(100vw-2rem))] max-h-[calc(100dvh-2rem)]" aria-labelledby="rd-title">
+        <div class="panel-card p-6 md:p-8 bg-ink-2">
+            <div class="flex items-start justify-between gap-4 mb-6">
+                <div class="flex items-center gap-3">
+                    <span class="w-12 h-12 rounded-full bg-emerald-500/15 text-emerald-300 flex items-center justify-center text-xl"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                    <div>
+                        <h2 id="rd-title" class="font-display font-bold text-2xl leading-tight" data-en="Damage report sent" data-pl="Zgłoszenie wysłane">Damage report sent</h2>
+                        <p id="rd-ref" class="text-sm text-zinc-400"></p>
+                    </div>
+                </div>
+                <button type="button" class="icon-btn bg-white/5 hover:bg-white/10 shrink-0" onclick="closeReportDialog()" data-en-aria="Close" data-pl-aria="Zamknij" aria-label="Close"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+            </div>
+            <dl id="rd-body" class="grid grid-cols-2 gap-3 text-sm mb-5"></dl>
+            <div id="rd-photos" class="grid grid-cols-4 gap-2 mb-5 empty:hidden"></div>
+            <div class="bg-white/[0.04] rounded-2xl p-4 mb-6">
+                <p class="label !mb-1" data-en="Description" data-pl="Opis">Description</p>
+                <p id="rd-desc" class="text-sm text-zinc-200 whitespace-pre-wrap break-words"></p>
+            </div>
+            <p class="text-sm text-zinc-400 mb-6" data-en="Our claims team will get back to you in the Client Panel. Need it for your insurer? Continue to the full claim — we'll pre-fill what we already know." data-pl="Zespół szkód odpowie w Panelu Klienta. Potrzebujesz tego dla ubezpieczyciela? Przejdź do pełnego zgłoszenia — uzupełnimy to, co już wiemy.">Our claims team will get back to you in the Client Panel. Need it for your insurer? Continue to the full claim — we'll pre-fill what we already know.</p>
+            <div class="flex flex-col-reverse sm:flex-row gap-3">
+                <button type="button" class="btn btn-ghost sm:w-1/2" onclick="closeReportDialog()"><span data-en="Done" data-pl="Gotowe">Done</span></button>
+                <button type="button" class="btn btn-primary sm:w-1/2" onclick="closeReportDialog(true)"><i class="fa-solid fa-file-lines" aria-hidden="true"></i><span data-en="Continue to full claim" data-pl="Przejdź do pełnego zgłoszenia">Continue to full claim</span></button>
+            </div>
+        </div>
+    </dialog>
+
+    <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-[150] pointer-events-none flex flex-col items-center gap-2 w-[calc(100%-2rem)] max-w-md" aria-live="polite" role="status"></div>
+
+    <script>
+        // ============ LANGUAGE ============
+        let currentLang = 'en';
+        function setLang(lang) {
+            currentLang = lang;
+            document.documentElement.lang = lang;
+            document.querySelectorAll('[data-en]').forEach(el => { el.innerHTML = el.getAttribute('data-' + lang); });
+            document.querySelectorAll('[data-en-ph]').forEach(el => { el.placeholder = el.getAttribute('data-' + lang + '-ph'); });
+            document.querySelectorAll('[data-en-aria]').forEach(el => { el.setAttribute('aria-label', el.getAttribute('data-' + lang + '-aria')); });
+            ['en', 'pl'].forEach(l => { const b = document.getElementById('lang-' + l); b.classList.toggle('active', l === lang); b.setAttribute('aria-pressed', l === lang); });
+            renderMarquee();
+            renderCars();
+            renderServicePoints();
+            renderResults();
+            renderChatChips();
+            renderStats();
+            updateClaimProgress();
+        }
+        const t = (en, pl) => currentLang === 'pl' ? pl : en;
+        const locale = () => currentLang === 'pl' ? 'pl-PL' : 'en-GB';
+        const fmt = n => Math.round(n).toLocaleString(locale());
+
+        // ============ UI HELPERS ============
+        function toast(msg, icon = 'fa-circle-check') {
+            const host = document.getElementById('toast');
+            const el = document.createElement('div');
+            el.className = 'flex items-center gap-3 bg-white text-ink font-semibold text-sm px-5 py-3.5 rounded-2xl shadow-2xl transition-all duration-300 opacity-0 translate-y-3';
+            el.innerHTML = `<i class="fa-solid ${icon} text-brand-600" aria-hidden="true"></i><span></span>`;
+            el.querySelector('span').textContent = msg;
+            host.appendChild(el);
+            requestAnimationFrame(() => el.classList.remove('opacity-0', 'translate-y-3'));
+            setTimeout(() => { el.classList.add('opacity-0', 'translate-y-3'); setTimeout(() => el.remove(), 300); }, 3200);
+        }
+        function toggleMenu(force) {
+            const menu = document.getElementById('mobile-menu'), btn = document.getElementById('menu-btn');
+            const open = typeof force === 'boolean' ? force : menu.classList.contains('hidden');
+            menu.classList.toggle('hidden', !open);
+            btn.setAttribute('aria-expanded', open);
+            btn.innerHTML = `<i class="fa-solid ${open ? 'fa-xmark' : 'fa-bars'}" aria-hidden="true"></i>`;
+        }
+        function jumpTo(id) { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        function appSoon() { toast(t('The VOLTA app is coming soon — stay tuned.', 'Aplikacja VOLTA już wkrótce — bądź czujny.'), 'fa-mobile-screen'); }
+        function partnerAction(btn) {
+            const tile = btn.closest('.loyalty-tile'); const name = tile ? tile.querySelector('h2').textContent : '';
+            toast(t(`${name}: request saved to your Client Panel.`, `${name}: zapisano w Twoim Panelu Klienta.`), 'fa-gift');
+        }
+
+        let revealObserver = null;
+        function observeReveals() {
+            const els = document.querySelectorAll('.reveal:not(.in)');
+            if (!('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('in')); return; }
+            if (!revealObserver) revealObserver = new IntersectionObserver(entries => {
+                entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); revealObserver.unobserve(en.target); } });
+            }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+            els.forEach(e => revealObserver.observe(e));
+        }
+
+        // ============ MARQUEE ============
+        const MARQUEE = [
+            ['No young-driver fee', 'Bez dopłat za wiek'], ['Airport pick-up in 6 cities', 'Odbiór na 6 lotniskach'],
+            ['3D damage reports', 'Zgłoszenia szkód 3D'], ['Book tyres in the app', 'Opony umówisz w aplikacji'],
+            ['Earn miles & partner perks', 'Mile i benefity partnerów'], ['Weekend fun cars', 'Fun-cary na weekend']
+        ];
+        function renderMarquee() {
+            const row = MARQUEE.map(([en, pl]) => `<span class="px-6 md:px-8 whitespace-nowrap">${t(en, pl)}</span><span aria-hidden="true">✺</span>`).join('');
+            document.getElementById('marquee-track').innerHTML = `<div class="flex items-center">${row}</div><div class="flex items-center" aria-hidden="true">${row}</div>`;
+        }
+
+        // ============ FLEET ============
+        // Swap any URL in CAR_IMG for a real photo of that exact model to make names + images match 1:1.
+        const CAR_IMG = {
+            convertible: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop",
+            van:         "https://images.unsplash.com/photo-1633869293572-9c8fb95e5f0f?q=80&w=800&auto=format&fit=crop",
+            sports:      "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=800&auto=format&fit=crop",
+            hatch:       "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?q=80&w=800&auto=format&fit=crop",
+            suv:         "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?q=80&w=800&auto=format&fit=crop",
+            muscle:      "https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?q=80&w=800&auto=format&fit=crop",
+            ev:          "https://images.unsplash.com/photo-1560958089-b8a1929cea89?q=80&w=800&auto=format&fit=crop"
+        };
+        const CAT_LABEL = { convertible: ['Convertible', 'Kabriolet'], van: ['Van', 'Van'], suv: ['SUV', 'SUV'], coupe: ['Coupé', 'Coupé'], hatchback: ['Hatchback', 'Hatchback'] };
+        const saved = new Set();
+        function saveBtnInner(on) { return `<i class="fa-solid ${on ? 'fa-check' : 'fa-plus'}" aria-hidden="true"></i>`; }
+        function carCard(c, i) {
+            const on = saved.has(c.n), cat = CAT_LABEL[c.cat] || [c.cat, c.cat];
+            return `<article class="car-card group bg-ink-2 text-white rounded-[28px] overflow-hidden ring-1 ring-white/10 flex flex-col" style="animation-delay:${(i || 0) * 70}ms">
+                <div class="relative aspect-[16/11] overflow-hidden bg-ink-3"><img src="${c.img}" alt="${c.n}" loading="lazy" class="car-image w-full h-full object-cover object-center">
+                    <span class="chip absolute top-4 left-4 bg-black/55 backdrop-blur text-white">${t(cat[0], cat[1])}</span></div>
+                <div class="p-6 flex flex-col flex-grow">
+                    <h3 class="font-display font-bold text-2xl leading-tight">${c.n}</h3>
+                    <p class="text-zinc-400 font-semibold text-xs tracking-wider uppercase mt-1">${t(c.de, c.dp)}</p>
+                    <div class="flex justify-between items-end mt-6 pt-5 border-t border-white/10">
+                        <p><span class="font-display font-bold text-3xl">${fmt(c.price)}</span> <span class="text-zinc-400 font-semibold text-sm">${t('PLN/' + c.per_en, 'PLN/' + c.per_pl)}</span></p>
+                        <button type="button" data-save="${c.n}" aria-pressed="${on}" aria-label="${t('Save', 'Zapisz')} ${c.n}" class="icon-btn !w-12 !h-12 ${on ? 'bg-white text-ink' : 'bg-brand text-ink hover:bg-brand-400'} hover:scale-105">${saveBtnInner(on)}</button>
+                    </div>
+                </div></article>`;
+        }
+        document.addEventListener('click', e => {
+            const b = e.target.closest('[data-save]'); if (!b) return;
+            const name = b.dataset.save, on = !saved.has(name);
+            on ? saved.add(name) : saved.delete(name);
+            document.querySelectorAll(`[data-save="${name}"]`).forEach(x => {
+                x.setAttribute('aria-pressed', on); x.innerHTML = saveBtnInner(on);
+                x.classList.toggle('bg-white', on); x.classList.toggle('bg-brand', !on); x.classList.toggle('hover:bg-brand-400', !on);
+            });
+            toast(on ? t(`${name} saved to your picks`, `${name} zapisano w ulubionych`) : t(`${name} removed from your picks`, `${name} usunięto z ulubionych`), on ? 'fa-heart' : 'fa-circle-minus');
+        });
+        let funExpanded = false, youthExpanded = false;
+        const FUN = [
+            {n:"Mini Cabrio", cat:"convertible", de:"Wind in your hair", dp:"Wiatr we włosach", price:720, per_en:"day", per_pl:"dzień", img:"https://car-images.bauersecure.com/wp-images/202974/1752x1168/082-mini-cooper-convertible.jpg?mode=max&quality=90&scale=down"},
+            {n:"VW ID. Buzz", cat:"van", de:"ELECTRIC ICON", dp:"ELEKTRYCZNA IKONA", price:980, per_en:"day", per_pl:"dzień", img:"https://hips.hearstapps.com/hmg-prod/images/vw-id-buzz-pomelo-yellow-exterior-rolling-c-sam-dobbins-2024-7692-enhanced-nr-6711f0a2aa2eb.jpg?crop=0.484xw:0.723xh;0.372xw,0.160xh&resize=1200:*"},
+            {n:"Mazda MX-5", cat:"convertible", de:"Legendary handling", dp:"Legendarny handling", price:650, per_en:"day", per_pl:"dzień", img:"https://hips.hearstapps.com/mtg-prod/65b61e7de04f0b00088763c3/2016-mazda-mx-5-miata-right-hand-drive-front-side-view-lights-on-in-white.jpg?w=768&width=768&q=75&format=webp"},
+            {n:"Ford Bronco", cat:"suv", de:"OFF-ROAD FREEDOM", dp:"BEZDROŻA WOLNOŚCI", price:940, per_en:"day", per_pl:"dzień", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRN6xc-pNpZ3sFjxc_MZYFtTWnUxr2vNmrpWT9B31DIU42Kge4Iub7gPvdi&s=10"},
+            {n:"Ford Mustang", cat:"coupe", de:"ADRENALINE RUSH", dp:"ADRENALINA", price:890, per_en:"day", per_pl:"dzień", img:"https://i.gremicdn.pl/image/free/20cdc75186e3e62ea5aeadf51a4323d7/?t=crop:1596:990:nowe:0:24,resize:fill:536:332,enlarge:1"},
+            {n:"Cupra Born", cat:"hatchback", de:"DIGITAL INSTINCT", dp:"CYFROWY INSTYNKT", price:750, per_en:"day", per_pl:"dzień", img:"https://www.cupraofficial.pl/content/dam/public/cupra-website/cars/born-2026/content-media/cupra-born-vz-timanfaya-grey-parked.jpg"}
+        ];
+        const YOUTH = [
+            {n:"Skoda Scala", cat:"hatchback", de:"Everyday precision", dp:"Codzienna precyzja", price:1250, per_en:"mo", per_pl:"msc", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRX9OFEA2dppzYG3NQKLL-Uyq4po0_aowO8kiq7ApgYWxGlKySYapv6VLD8&s=10"},
+            {n:"Suzuki Swift", cat:"hatchback", de:"Urban instinct", dp:"Miejski instynkt", price:980, per_en:"mo", per_pl:"msc", img:"https://www.globalsuzuki.com/pan-europeantestdrive2403/swift/presskit/img/thumb_mov_02.jpg"},
+            {n:"Peugeot 408", cat:"suv", de:"Avant-garde SUV", dp:"Awangardowy SUV", price:1550, per_en:"mo", per_pl:"msc", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4z_T2aojadOfKmu4jev0pFNeOW340RUuxsDTdqM1CpYVbDI5-tIV1cds&s=10"},
+            {n:"Nissan Qashqai", cat:"suv", de:"SUV COMFORT", dp:"KOMFORT SUV", price:1400, per_en:"mo", per_pl:"msc", img:"https://www.edmunds.com/assets/m/cs/cms/354e5e44-910c-4ccf-a26b-697fe0f68d59/New+e-POWER+on+Qashqai+_2025_14_1600.jpg"},
+            {n:"Kia Stonic", cat:"suv", de:"URBAN AGILITY", dp:"MIEJSKA ZWINNOŚĆ", price:1100, per_en:"mo", per_pl:"msc", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVXaO1eDxCeQshhXgXCiWXRpxSiyGVnJBvUHA3KjNYORT9f3RvJWlYJn0&s=10"},
+            {n:"Toyota Yaris", cat:"hatchback", de:"HYBRID POWER", dp:"MOC HYBRYDY", price:1050, per_en:"mo", per_pl:"msc", img:"https://speedme.ru/uploads/en_materials/big_webp/n6NfeGwZfrbjN1ALXByO.webp"}
+        ];
+        function renderCars() {
+            document.getElementById('fun-grid').innerHTML = FUN.slice(0, funExpanded ? 6 : 3).map(carCard).join('');
+            document.getElementById('youth-grid').innerHTML = YOUTH.slice(0, youthExpanded ? 6 : 3).map(carCard).join('');
+        }
+        function expandFunFleet() { funExpanded = true; renderCars(); document.getElementById('fun-btn-container').classList.add('hidden'); }
+        function expandYouthFleet() { youthExpanded = true; renderCars(); document.getElementById('youth-btn-container').classList.add('hidden'); }
+
+        // ============ SEARCH ============
+        // "weekend" -> daily Fun fleet; "everyday" -> monthly subscription fleet. Filter by body type + max budget.
+        let lastSearch = null;
+        function runSearch() {
+            lastSearch = {
+                when: document.getElementById('search-when').value,       // weekend | everyday
+                bt: document.getElementById('search-bodytype').value,     // all | convertible | suv | hatchback
+                budget: document.getElementById('search-budget').value ? parseInt(document.getElementById('search-budget').value, 10) : null
+            };
+            showPage('results');
+            renderResults();
+        }
+        function renderResults() {
+            if (!lastSearch) return;
+            const { when, bt, budget } = lastSearch;
+            const fleet = when === 'weekend' ? FUN : YOUTH;
+            const perUnit = when === 'weekend' ? t('day', 'dzień') : t('mo', 'msc');
+            const matches = fleet.filter(c => (bt === 'all' || c.cat === bt) && (budget == null || c.price <= budget));
+            const grid = document.getElementById('results-grid');
+            const empty = document.getElementById('results-empty');
+            grid.innerHTML = matches.map(carCard).join('');
+            grid.classList.toggle('hidden', matches.length === 0);
+            empty.classList.toggle('hidden', matches.length > 0);
+            const catLabel = bt === 'all' ? t('all body types', 'wszystkie nadwozia')
+                : bt === 'convertible' ? t('convertibles', 'kabriolety')
+                : bt === 'suv' ? 'SUV'
+                : t('hatchbacks', 'hatchbacki');
+            document.getElementById('results-title').innerText = when === 'weekend' ? t('Weekend rides', 'Auta na weekend') : t('Everyday subscription', 'Subskrypcja na co dzień');
+            const priceLabel = budget != null ? t('under', 'do') + ' ' + budget + ' PLN/' + perUnit : t('any price', 'dowolna cena');
+            document.getElementById('results-sub').innerText = matches.length + ' ' + t('cars', 'aut') + ' · ' + catLabel + ' · ' + priceLabel;
+        }
+
+        // ============ NAVIGATION ============
+        function showPage(p) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(`${p}-page`).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'instant' });
+            if (p === 'client-panel') setTimeout(() => { initServiceMap(); panelViewer.init(); }, 200);
+            if (p === 'full-report') setTimeout(() => { reportViewer.init(); updateClaimProgress(); }, 200);
+            document.querySelectorAll('[data-nav]').forEach(a => {
+                const on = a.dataset.nav === p;
+                a.classList.toggle('is-active', on);
+                if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+            });
+            toggleMenu(false);
+            observeReveals();
+        }
+
+        // ============ RENTAL STATS ============
+        const RING_C = 263.9;
+        const RENTALS = {
+            audi: { used: 420, left: 675, limit: 45000, model: 'Audi Q3',     plate: 'WAW 420X', body: 'SUV' },
+            mini: { used: 180, left: 550, limit: 30000, model: 'Mini Cabrio', plate: 'WAW 697Y', body: ['Convertible', 'Kabriolet'] }
+        };
+        let kmLeft = null, lastOdometer = null;
+        const curRental = () => RENTALS[document.getElementById('car-selector').value];
+        function setTxt(id, v) { document.getElementById(id).innerText = v; }
+        function setRing(id, frac) { document.getElementById(id).style.strokeDashoffset = RING_C * (1 - Math.max(0, Math.min(1, frac))); }
+        function renderStats() {
+            const r = curRental(), total = r.used + r.left, pct = Math.round(r.used / total * 100);
+            setTxt('stat-days-passed', r.used); setTxt('stat-days-left', r.left); setTxt('stat-limit', (r.limit / 1000) + 'k');
+            setTxt('km-left', kmLeft == null ? '--' : (kmLeft / 1000).toFixed(1) + 'k');
+            setRing('ring-used', r.used / total); setRing('ring-left', r.left / total);
+            setRing('ring-km', kmLeft == null ? 0 : kmLeft / r.limit); setRing('ring-limit', 1);
+            setTxt('contract-pct', pct + '%'); document.getElementById('contract-bar').style.width = pct + '%';
+            if (lastOdometer != null) calculateKM(true);
+        }
+        function setKmMsg(msg, tone) {
+            const el = document.getElementById('km-msg');
+            el.textContent = msg; el.classList.toggle('hidden', !msg);
+            el.className = 'text-sm mt-3 ' + (msg ? '' : 'hidden ') + (tone === 'warn' ? 'text-amber-300' : 'text-emerald-300');
+        }
+        function updateRentalStats() {
+            kmLeft = null; lastOdometer = null;
+            document.getElementById('mileage-input').value = '';
+            setKmMsg('');
+            renderStats();
+        }
+        function calculateKM(silent) {
+            const val = parseFloat(document.getElementById('mileage-input').value);
+            if (!(val > 0)) { if (!silent) setKmMsg(t('Enter your current odometer reading first.', 'Najpierw wpisz stan licznika.'), 'warn'); return; }
+            const r = curRental(); lastOdometer = val;
+            kmLeft = Math.max(0, r.limit - val);
+            setTxt('km-left', (kmLeft / 1000).toFixed(1) + 'k'); setRing('ring-km', kmLeft / r.limit);
+            if (val > r.limit) setKmMsg(t(`You're ${fmt(val - r.limit)} km over your ${fmt(r.limit)} km limit.`, `Przekroczono limit ${fmt(r.limit)} km o ${fmt(val - r.limit)} km.`), 'warn');
+            else setKmMsg(t(`${fmt(kmLeft)} km left — about ${fmt(kmLeft / r.left)} km per day until your contract ends.`, `Zostało ${fmt(kmLeft)} km — około ${fmt(kmLeft / r.left)} km dziennie do końca umowy.`));
+        }
+
+        // ============ SERVICE MAP ============
+        const SERVICE_POINTS = [
+            { name:"Wola Center",     addr:"ul. Wolska 15, Warsaw",      lat:52.2319, lng:20.9634, tel:"+48 22 123 45 67" },
+            { name:"Mokotów Service", addr:"ul. Domaniewska 42, Warsaw", lat:52.1837, lng:21.0003, tel:"+48 22 765 43 21" },
+            { name:"Praga Point",     addr:"ul. Targowa 20, Warsaw",     lat:52.2528, lng:21.0446, tel:"+48 22 222 33 44" },
+            { name:"Ursynów Hub",     addr:"al. KEN 36, Warsaw",         lat:52.1450, lng:21.0490, tel:"+48 22 888 99 00" }
+        ];
+        let serviceMap = null, serviceMarkers = [], svcType = 'tyres', openSlots = null;
+        const bookings = {};
+        function initServiceMap() {
+            if (typeof L === 'undefined') return;
+            if (serviceMap) { serviceMap.invalidateSize(); return; }
+            serviceMap = L.map('leaflet-service-map', { zoomControl:false, scrollWheelZoom:false }).setView([52.2, 21.0], 11);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution:'&copy; OpenStreetMap', subdomains:'abcd', maxZoom:19 }).addTo(serviceMap);
+            L.control.zoom({ position:'bottomright' }).addTo(serviceMap);
+            const icon = L.divIcon({ className:'custom-pin', html:'<div style="background:#ff5f00;width:16px;height:16px;border-radius:50%;border:3px solid white;box-shadow:0 0 15px #ff5f00;"></div>', iconSize:[16,16], iconAnchor:[8,8] });
+            serviceMarkers = SERVICE_POINTS.map(pt => L.marker([pt.lat, pt.lng], { icon, title: pt.name }).addTo(serviceMap)
+                .bindPopup(`<b style="color:#ff5f00;font-family:Inter,sans-serif;font-size:14px;">${pt.name}</b><br><span style="font-family:Inter,sans-serif;font-size:12px;color:#aaa;">${pt.addr}</span>`));
+            renderServicePoints();
+        }
+        function slotsFor(i) {
+            const times = [['09:00', '13:30', '16:00'], ['08:30', '12:00', '15:30'], ['10:00', '14:00', '17:30'], ['09:30', '11:30', '16:30']][i % 4];
+            return times.map((tm, j) => {
+                const d = new Date(); d.setDate(d.getDate() + 1 + (j === 2 ? 1 : 0));
+                const day = j < 2 ? t('Tomorrow', 'Jutro') : d.toLocaleDateString(locale(), { weekday: 'short' });
+                return `${day} ${tm}`;
+            });
+        }
+        const svcLabel = () => svcType === 'tyres' ? t('Tyre change', 'Wymiana opon') : t('Service', 'Serwis');
+        function setSvcType(type) {
+            svcType = type;
+            document.getElementById('svc-tyres').className = type === 'tyres' ? 'bg-brand' : 'bg-zinc-800';
+            document.getElementById('svc-service').className = type === 'service' ? 'bg-brand' : 'bg-zinc-800';
+            renderServicePoints();
+        }
+        function renderServicePoints() {
+            const el = document.getElementById('service-points');
+            if (!el) return;
+            el.innerHTML = SERVICE_POINTS.map((pt, i) => {
+                const b = bookings[i], open = openSlots === i && !b;
+                return `
+                <div class="bg-white/[0.03] p-4 rounded-2xl border ${b ? 'border-emerald-500/40' : 'border-white/10 hover:border-[#ff5f00]/50'} transition">
+                    <div class="flex items-start justify-between gap-3">
+                        <button type="button" onclick="focusPoint(${i})" class="text-left group min-w-0" aria-label="${t('Show on map', 'Pokaż na mapie')}: ${pt.name}">
+                            <h3 class="font-display font-bold text-lg leading-tight group-hover:text-brand transition">${pt.name}</h3>
+                            <p class="text-sm text-zinc-400 mt-0.5"><i class="fa-solid fa-location-dot mr-1.5 text-zinc-500" aria-hidden="true"></i>${pt.addr}</p>
+                        </button>
+                        <a href="tel:${pt.tel.replace(/\s/g,'')}" class="icon-btn bg-white/5 hover:bg-brand hover:text-ink shrink-0" aria-label="${t('Call', 'Zadzwoń')} ${pt.name}: ${pt.tel}"><i class="fa-solid fa-phone" aria-hidden="true"></i></a>
+                    </div>
+                    ${b ? `<div class="mt-3 flex items-center justify-between gap-2 bg-emerald-500/10 rounded-xl px-3 py-2.5">
+                            <p class="text-sm text-emerald-300 font-semibold"><i class="fa-solid fa-calendar-check mr-2" aria-hidden="true"></i>${b.label} · ${b.slot}</p>
+                            <button type="button" onclick="cancelBooking(${i})" class="text-xs font-semibold text-zinc-400 hover:text-white underline underline-offset-2">${t('Cancel', 'Anuluj')}</button></div>`
+                    : `<div class="mt-3 flex items-center justify-between gap-3">
+                            <p class="text-xs text-zinc-500">${pt.tel}</p>
+                            <button type="button" onclick="toggleSlots(${i})" aria-expanded="${open}" class="btn btn-sm ${open ? 'btn-ghost' : 'btn-primary'} !min-h-[36px]">${open ? t('Close', 'Zamknij') : t('Book slot', 'Zarezerwuj')}</button></div>`}
+                    ${open ? `<div class="mt-3 pt-3 border-t border-white/10"><p class="text-[11px] text-zinc-400 uppercase font-bold tracking-wider mb-2">${t('Book directly:', 'Umów się bezpośrednio:')} ${svcLabel()}</p>
+                            <div class="flex flex-wrap gap-2">${slotsFor(i).map((s, j) => `<button type="button" class="slot" onclick="book(${i}, '${s}')">${s}</button>`).join('')}</div></div>` : ''}
+                </div>`;
+            }).join('');
+        }
+        function toggleSlots(i) { openSlots = openSlots === i ? null : i; renderServicePoints(); }
+        function book(i, slot) {
+            bookings[i] = { label: svcLabel(), slot }; openSlots = null; renderServicePoints();
+            toast(t(`Booked: ${bookings[i].label} at ${SERVICE_POINTS[i].name}, ${slot}`, `Zarezerwowano: ${bookings[i].label} w ${SERVICE_POINTS[i].name}, ${slot}`), 'fa-calendar-check');
+        }
+        function cancelBooking(i) { delete bookings[i]; renderServicePoints(); toast(t('Booking cancelled', 'Rezerwacja anulowana'), 'fa-calendar-xmark'); }
+        function focusPoint(i) {
+            if (!serviceMap || !serviceMarkers[i]) return;
+            serviceMap.flyTo([SERVICE_POINTS[i].lat, SERVICE_POINTS[i].lng], 14, { duration: .8 });
+            serviceMarkers[i].openPopup();
+        }
+
+        // ============ 3D DAMAGE VIEWER (reusable factory) ============
+        function createDamageViewer(opts) {
+            let scene, camera, renderer, carGroup, pinsGroup, currentType = 'sedan', pins = 0;
+            let dragging = false, prev = {x:0,y:0}, start = {x:0,y:0}, tStart = 0, started = false;
+
+            function init() {
+                const container = document.getElementById(opts.containerId);
+                if (!container || started || container.querySelector('canvas')) { if (renderer) renderer.setSize(container.clientWidth, container.clientHeight); return; }
+                if (!container.clientWidth) return;
+                started = true;
+                const w = container.clientWidth, h = container.clientHeight;
+                scene = new THREE.Scene(); scene.background = new THREE.Color(0x0a0a0a);
+                camera = new THREE.PerspectiveCamera(45, w/h, 0.1, 100); camera.position.set(0,1.5,7); camera.lookAt(0,0,0);
+                renderer = new THREE.WebGLRenderer({ antialias:true }); renderer.setSize(w,h); renderer.setPixelRatio(window.devicePixelRatio);
+                container.insertBefore(renderer.domElement, container.firstChild);
+                scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+                const d = new THREE.DirectionalLight(0xffffff, 0.8); d.position.set(5,10,7); scene.add(d);
+                const bl = new THREE.DirectionalLight(0xffffff, 0.4); bl.position.set(-5,5,-7); scene.add(bl);
+                carGroup = new THREE.Group(); scene.add(carGroup);
+                pinsGroup = new THREE.Group(); carGroup.add(pinsGroup);
+                build(currentType); carGroup.rotation.y = -Math.PI/6;
+                (function loop(){ requestAnimationFrame(loop); renderer.render(scene, camera); labels(); })();
+                const cv = renderer.domElement;
+                cv.addEventListener('pointerdown', e => { dragging=true; prev={x:e.clientX,y:e.clientY}; start={x:e.clientX,y:e.clientY}; tStart=Date.now(); cv.setPointerCapture(e.pointerId); });
+                cv.addEventListener('pointermove', e => { if(!dragging) return; carGroup.rotation.y += (e.clientX-prev.x)*0.01; carGroup.rotation.x += (e.clientY-prev.y)*0.01; carGroup.rotation.x = Math.max(-Math.PI/4, Math.min(Math.PI/4, carGroup.rotation.x)); prev={x:e.clientX,y:e.clientY}; });
+                cv.addEventListener('pointerup', e => { dragging=false; cv.releasePointerCapture(e.pointerId); const dist=Math.hypot(e.clientX-start.x, e.clientY-start.y); if(Date.now()-tStart<250 && dist<5) click(e); });
+                window.addEventListener('resize', () => { if(!container.clientWidth) return; renderer.setSize(container.clientWidth, container.clientHeight); camera.aspect=container.clientWidth/container.clientHeight; camera.updateProjectionMatrix(); });
+            }
+
+            function changeCar(type) {
+                currentType = type;
+                ['suv','sedan','hatchback'].forEach(id => {
+                    const btn = document.getElementById(opts.btnPrefix + '-' + id); if(!btn) return;
+                    btn.className = (id === type)
+                        ? opts.btnActive
+                        : opts.btnIdle;
+                });
+                if (carGroup) { build(type); while(pinsGroup.children.length) pinsGroup.remove(pinsGroup.children[0]); pins=0; document.getElementById(opts.pinCountId).innerText='0'; }
+            }
+
+            function build(type) {
+                carGroup.children = carGroup.children.filter(c => c === pinsGroup);
+                const shape = new THREE.Shape();
+                if (type === 'sedan') { shape.moveTo(-2.2,0.3); shape.lineTo(-2.2,0.7); shape.lineTo(-1.2,0.9); shape.lineTo(-0.5,1.4); shape.lineTo(0.8,1.4); shape.lineTo(1.5,0.9); shape.lineTo(2.2,0.9); shape.lineTo(2.3,0.4); shape.lineTo(2.0,0.2); shape.lineTo(-1.9,0.2); }
+                else if (type === 'hatchback') { shape.moveTo(-1.8,0.3); shape.lineTo(-1.8,0.7); shape.lineTo(-0.8,0.9); shape.lineTo(-0.1,1.5); shape.lineTo(1.2,1.5); shape.lineTo(1.6,0.6); shape.lineTo(1.4,0.2); shape.lineTo(-1.5,0.2); }
+                else if (type === 'suv') { shape.moveTo(-2.1,0.4); shape.lineTo(-2.1,1.0); shape.lineTo(-1.0,1.2); shape.lineTo(-0.3,1.8); shape.lineTo(1.7,1.8); shape.lineTo(2.1,0.8); shape.lineTo(1.8,0.3); shape.lineTo(-1.8,0.3); }
+
+                const geo = new THREE.ExtrudeGeometry(shape, { depth:1.6, bevelEnabled:true, bevelSegments:4, steps:1, bevelSize:0.15, bevelThickness:0.15 });
+                geo.computeBoundingBox();
+                const b = geo.boundingBox;
+                const cx = -(b.max.x+b.min.x)/2, cy = -(b.max.y+b.min.y)/2, cz = -(b.max.z+b.min.z)/2;
+                geo.translate(cx, cy, cz);
+                geo.computeBoundingBox();                 // recompute AFTER centering (translate mutates the box)
+                const bc = geo.boundingBox;               // centered bounds — use for faces, wheels, markers
+
+                const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color:0xffffff, roughness:0.3, metalness:0.2, polygonOffset:true, polygonOffsetFactor:1, polygonOffsetUnits:1 }));
+                mesh.name = "CarBody";
+                mesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color:0xff5f00, transparent:true, opacity:0.8 })));
+
+                const winShapes = [], doorPoints = [];
+                if (type === 'sedan') {
+                    const s1=new THREE.Shape(); s1.moveTo(-0.4,1.35); s1.lineTo(0.1,1.35); s1.lineTo(0.1,0.95); s1.lineTo(-1.0,0.95); winShapes.push(s1);
+                    const s2=new THREE.Shape(); s2.moveTo(0.2,1.35); s2.lineTo(0.8,1.35); s2.lineTo(1.4,0.95); s2.lineTo(0.2,0.95); winShapes.push(s2);
+                    doorPoints.push(new THREE.Vector3(-0.9,0.95,0), new THREE.Vector3(-0.8,0.2,0), new THREE.Vector3(0.1,0.95,0), new THREE.Vector3(0.1,0.2,0), new THREE.Vector3(1.3,0.95,0), new THREE.Vector3(1.1,0.2,0));
+                } else if (type === 'hatchback') {
+                    const s1=new THREE.Shape(); s1.moveTo(0.0,1.45); s1.lineTo(0.4,1.45); s1.lineTo(0.4,0.95); s1.lineTo(-0.7,0.95); winShapes.push(s1);
+                    const s2=new THREE.Shape(); s2.moveTo(0.5,1.45); s2.lineTo(1.1,1.45); s2.lineTo(1.4,0.8); s2.lineTo(0.5,0.95); winShapes.push(s2);
+                    doorPoints.push(new THREE.Vector3(-0.6,0.95,0), new THREE.Vector3(-0.5,0.2,0), new THREE.Vector3(0.4,0.95,0), new THREE.Vector3(0.4,0.2,0), new THREE.Vector3(1.3,0.8,0), new THREE.Vector3(1.2,0.2,0));
+                } else if (type === 'suv') {
+                    const s1=new THREE.Shape(); s1.moveTo(-0.2,1.7); s1.lineTo(0.6,1.7); s1.lineTo(0.6,1.1); s1.lineTo(-0.9,1.1); winShapes.push(s1);
+                    const s2=new THREE.Shape(); s2.moveTo(0.7,1.7); s2.lineTo(1.6,1.7); s2.lineTo(1.9,1.1); s2.lineTo(0.7,1.1); winShapes.push(s2);
+                    doorPoints.push(new THREE.Vector3(-0.8,1.1,0), new THREE.Vector3(-0.8,0.3,0), new THREE.Vector3(0.6,1.1,0), new THREE.Vector3(0.6,0.3,0), new THREE.Vector3(1.8,1.0,0), new THREE.Vector3(1.7,0.3,0));
+                }
+
+                const winGeo = new THREE.ExtrudeGeometry(winShapes, { depth:1.62, bevelEnabled:false });
+                winGeo.translate(cx, cy, -1.62/2);
+                const windows = new THREE.Mesh(winGeo, new THREE.MeshStandardMaterial({ color:0x111111, roughness:0.1, metalness:0.8 }));
+                windows.name = "CarWindow"; mesh.add(windows);
+
+                if (doorPoints.length) {
+                    const doorGeo = new THREE.BufferGeometry().setFromPoints(doorPoints);
+                    doorGeo.translate(cx, cy, 0);
+                    const mat = new THREE.LineBasicMaterial({ color:0xff5f00, transparent:true, opacity:0.8 });
+                    const dL = new THREE.LineSegments(doorGeo, mat); dL.position.z = bc.max.z + 0.01; mesh.add(dL);
+                    const dR = new THREE.LineSegments(doorGeo, mat); dR.position.z = bc.min.z - 0.01; mesh.add(dR);
+                }
+
+                // Wheels — flush to the body side faces, sitting at the sill
+                const wheelY = bc.min.y + 0.02;
+                const wGeo = new THREE.CylinderGeometry(0.28, 0.28, 0.26, 32); wGeo.rotateX(Math.PI/2);
+                const wMat = new THREE.MeshStandardMaterial({ color:0x222222, roughness:0.9 });
+                let fx = bc.min.x + 0.85, rx = bc.max.x - 0.85;
+                if (type === 'hatchback') { fx += 0.05; rx -= 0.05; }
+                if (type === 'suv') { fx += 0.15; rx -= 0.15; }
+                const zL = bc.max.z - 0.08, zR = bc.min.z + 0.08;
+                [[fx,zL],[fx,zR],[rx,zL],[rx,zR]].forEach(([x,z]) => { const wh = new THREE.Mesh(wGeo, wMat); wh.position.set(x, wheelY, z); wh.name = "CarWheel"; mesh.add(wh); });
+
+                const fm = new THREE.Object3D(); fm.position.set((type==='suv'?-2.2:-2.0)+cx, 0.8+cy, 0); mesh.add(fm); mesh.userData.frontMarker = fm;
+                const bm = new THREE.Object3D(); bm.position.set((type==='suv'?2.2:2.0)+cx, 0.8+cy, 0); mesh.add(bm); mesh.userData.backMarker = bm;
+                carGroup.add(mesh);
+            }
+
+            function click(event) {
+                const container = document.getElementById(opts.containerId);
+                const rect = container.getBoundingClientRect();
+                const mouse = new THREE.Vector2(((event.clientX-rect.left)/rect.width)*2-1, -((event.clientY-rect.top)/rect.height)*2+1);
+                const ray = new THREE.Raycaster(); ray.setFromCamera(mouse, camera);
+                const hits = ray.intersectObjects(carGroup.children, true);
+                if (!hits.length) return;
+                let pinG = null;
+                for (const hit of hits) { let o = hit.object; if (o.userData.isPin) { while(o && o.type!=="Scene"){ if(o.userData.isPinGroup){ pinG=o; break; } o=o.parent; } break; } }
+                if (pinG) { pinsGroup.remove(pinG); pins--; document.getElementById(opts.pinCountId).innerText = pins; return; }
+                const target = hits.find(i => ["CarBody","CarWindow","CarWheel"].includes(i.object.name));
+                if (target) createPin(target.point, target.face.normal);
+            }
+
+            function createPin(worldPoint, normal) {
+                const g = new THREE.Group(); g.userData.isPinGroup = true;
+                const head = new THREE.Mesh(new THREE.SphereGeometry(0.1,16,16), new THREE.MeshBasicMaterial({ color:0xff5f00 })); head.position.y=0.25; head.userData.isPin=true; g.add(head);
+                const cone = new THREE.Mesh(new THREE.ConeGeometry(0.04,0.25,16), new THREE.MeshBasicMaterial({ color:0xff5f00 })); cone.position.y=0.125; cone.userData.isPin=true; g.add(cone);
+                g.position.copy(carGroup.worldToLocal(worldPoint.clone()));
+                g.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), normal);
+                pinsGroup.add(g); pins++; document.getElementById(opts.pinCountId).innerText = pins;
+            }
+
+            function labels() {
+                const container = document.getElementById(opts.containerId); if (!container) return;
+                const mesh = carGroup.children.find(c => c.name === "CarBody"); if (!mesh) return;
+                const w = container.clientWidth, h = container.clientHeight;
+                const proj = (marker, el) => {
+                    if (!el || !marker) return;
+                    const pos = new THREE.Vector3(); marker.getWorldPosition(pos); pos.project(camera);
+                    if (pos.z > 1) { el.style.display = 'none'; return; }
+                    el.style.display = 'flex';
+                    el.style.transform = `translate(-50%,-100%) translate(${(pos.x*0.5+0.5)*w}px, ${(pos.y*-0.5+0.5)*h - 20}px)`;
+                };
+                proj(mesh.userData.frontMarker, document.getElementById(opts.frontLabelId));
+                proj(mesh.userData.backMarker, document.getElementById(opts.backLabelId));
+            }
+
+            return { init, changeCar, get pins(){ return pins; }, reset(){ if(pinsGroup){ while(pinsGroup.children.length) pinsGroup.remove(pinsGroup.children[0]); pins=0; if(document.getElementById(opts.pinCountId)) document.getElementById(opts.pinCountId).innerText='0'; } } };
+        }
+
+        const panelViewer = createDamageViewer({
+            containerId:'car-3d-container', pinCountId:'pin-count', frontLabelId:'front-label', backLabelId:'back-label', btnPrefix:'btn',
+            btnActive:"py-3 px-2 rounded-lg font-medium text-sm transition-all duration-300 bg-brand text-white shadow-lg shadow-orange-900/50",
+            btnIdle:"py-3 px-2 rounded-lg font-medium text-sm transition-all duration-300 bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white"
+        });
+        const reportViewer = createDamageViewer({
+            containerId:'report-3d-container', pinCountId:'report-pin-count', frontLabelId:'report-front-label', backLabelId:'report-back-label', btnPrefix:'rbtn',
+            btnActive:"px-5 py-2 bg-brand text-white text-[10px] font-black rounded-lg uppercase",
+            btnIdle:"px-5 py-2 bg-zinc-800 text-white text-[10px] font-black rounded-lg uppercase"
+        });
+
+        // ============ DAMAGE REPORT (photos + quick submit) ============
+        const MAX_PHOTOS = 8;
+        let damagePhotos = [];
+        function addPhotos(files) {
+            const list = Array.from(files || []).filter(f => f.type.startsWith('image/'));
+            const room = MAX_PHOTOS - damagePhotos.length;
+            list.slice(0, room).forEach(f => damagePhotos.push({ url: URL.createObjectURL(f), name: f.name }));
+            if (list.length > room) toast(t(`You can add up to ${MAX_PHOTOS} photos.`, `Możesz dodać maksymalnie ${MAX_PHOTOS} zdjęć.`), 'fa-circle-info');
+            renderPhotos();
+        }
+        function removePhoto(i) { URL.revokeObjectURL(damagePhotos[i].url); damagePhotos.splice(i, 1); renderPhotos(); }
+        function renderPhotos() {
+            document.getElementById('photo-grid').innerHTML = damagePhotos.map((p, i) => `
+                <figure class="relative aspect-square rounded-2xl overflow-hidden ring-1 ring-white/10 group">
+                    <img src="${p.url}" alt="${t('Damage photo', 'Zdjęcie szkody')} ${i + 1}" class="w-full h-full object-cover">
+                    <button type="button" onclick="removePhoto(${i})" class="absolute top-1.5 right-1.5 w-8 h-8 rounded-full bg-black/70 backdrop-blur text-white text-sm hover:bg-brand hover:text-ink transition" aria-label="${t('Remove photo', 'Usuń zdjęcie')} ${i + 1}"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                </figure>`).join('');
+        }
+        (function initDropzone() {
+            const dz = document.getElementById('dropzone');
+            ['dragenter', 'dragover'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.add('drag'); }));
+            ['dragleave', 'drop'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.remove('drag'); }));
+            dz.addEventListener('drop', e => addPhotos(e.dataTransfer.files));
+        })();
+
+        function activeBodyType(prefix) {
+            const b = ['sedan', 'suv', 'hatchback'].map(id => document.getElementById(prefix + '-' + id)).find(el => el && el.classList.contains('bg-brand'));
+            return b ? b.textContent.trim() : 'Sedan';
+        }
+        function prefillClaim() {
+            const r = curRental(), desc = document.getElementById('damage-desc').value.trim();
+            const setIfEmpty = (id, v) => { const el = document.getElementById(id); if (el && !el.value && v) el.value = v; };
+            setIfEmpty('claim-make', r.model); setIfEmpty('claim-reg', r.plate);
+            setIfEmpty('claim-body', Array.isArray(r.body) ? t(r.body[0], r.body[1]) : r.body);
+            setIfEmpty('claim-mileage', lastOdometer ? fmt(lastOdometer) + ' km' : '');
+            setIfEmpty('claim-parts', desc);
+        }
+        function openFullReport() { prefillClaim(); showPage('full-report'); }
+
+        function submitDamageReport(e) {
+            e.preventDefault();
+            const err = document.getElementById('pin-error');
+            if (panelViewer.pins === 0) {
+                err.textContent = t("Please mark the damage location on the 3D model.", "Proszę zaznaczyć miejsce szkody na modelu 3D.");
+                err.classList.remove('hidden');
+                document.getElementById('car-3d-container').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+            err.classList.add('hidden');
+            const sel = document.getElementById('car-selector');
+            const ref = 'VLT-' + new Date().getFullYear() + '-' + String(Math.floor(10000 + Math.random() * 89999));
+            const when = new Date().toLocaleString(locale(), { dateStyle: 'medium', timeStyle: 'short' });
+            document.getElementById('rd-ref').textContent = t('Reference', 'Numer') + ' ' + ref + ' · ' + when;
+            const rows = [
+                [t('Vehicle', 'Pojazd'), sel.options[sel.selectedIndex].text],
+                [t('Body type', 'Nadwozie'), activeBodyType('btn')],
+                [t('Damage pins', 'Pinezki'), panelViewer.pins],
+                [t('Photos', 'Zdjęcia'), damagePhotos.length]
+            ];
+            document.getElementById('rd-body').innerHTML = rows.map(([k, v]) => `<div class="bg-white/[0.04] rounded-2xl p-3"><dt class="text-xs text-zinc-400 mb-0.5">${k}</dt><dd class="font-semibold">${v}</dd></div>`).join('');
+            document.getElementById('rd-photos').innerHTML = damagePhotos.map((p, i) => `<img src="${p.url}" alt="${t('Damage photo', 'Zdjęcie szkody')} ${i + 1}" class="aspect-square w-full object-cover rounded-xl">`).join('');
+            document.getElementById('rd-desc').textContent = document.getElementById('damage-desc').value.trim();
+            document.getElementById('report-dialog').showModal();
+        }
+        function resetDamageForm() {
+            document.getElementById('damage-desc').value = '';
+            damagePhotos.forEach(p => URL.revokeObjectURL(p.url)); damagePhotos = []; renderPhotos();
+            panelViewer.reset();
+        }
+        function closeReportDialog(toClaim) {
+            const dlg = document.getElementById('report-dialog');
+            if (toClaim) prefillClaim();
+            dlg.close();
+            resetDamageForm();
+            if (toClaim) showPage('full-report');
+            else toast(t('Report sent — we will update you in the panel.', 'Zgłoszenie wysłane — damy znać w panelu.'));
+        }
+
+        function submitFullReport(e) {
+            e.preventDefault();
+            const btn = document.getElementById('full-report-submit');
+            btn.innerHTML = `<i class="fa-solid fa-check" aria-hidden="true"></i><span>${t('Claim submitted ✓', 'Zgłoszenie wysłane ✓')}</span>`;
+            btn.classList.replace('btn-primary', 'bg-emerald-500'); btn.disabled = true;
+            setTimeout(() => {
+                showPage('client-panel');
+                toast(t('Your claim was submitted to the insurer.', 'Zgłoszenie trafiło do ubezpieczyciela.'), 'fa-file-circle-check');
+                btn.innerHTML = `<i class="fa-solid fa-paper-plane" aria-hidden="true"></i><span>${t('Submit claim', 'Wyślij zgłoszenie')}</span>`;
+                btn.classList.replace('bg-emerald-500', 'btn-primary'); btn.disabled = false;
+            }, 1800);
+        }
+
+        // Claim form progress indicator
+        function updateClaimProgress() {
+            const page = document.getElementById('full-report-page');
+            if (!page.classList.contains('active')) return;
+            const secs = Array.from(page.querySelectorAll('.claim-section'));
+            let idx = 0;
+            secs.forEach((s, i) => { if (s.getBoundingClientRect().top < window.innerHeight * 0.45) idx = i; });
+            if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 4) idx = secs.length - 1;
+            setTxt('claim-step', `${idx + 1} / ${secs.length}`);
+            setTxt('claim-step-label', secs[idx].querySelector('.section-header').textContent);
+            document.getElementById('claim-bar').style.width = ((idx + 1) / secs.length * 100) + '%';
+        }
+        let claimTick = false;
+        window.addEventListener('scroll', () => { if (claimTick) return; claimTick = true; requestAnimationFrame(() => { claimTick = false; updateClaimProgress(); }); }, { passive: true });
+
+        // ============ ASSISTANT (demo) ============
+        const CHAT_CHIPS = [
+            ['How many km do I have left?', 'Ile km mi zostało?'],
+            ['Book a tyre change', 'Umów wymianę opon'],
+            ['I scratched the car', 'Zarysowałem auto'],
+            ['When does my contract end?', 'Kiedy kończy się umowa?']
+        ];
+        function renderChatChips() {
+            document.getElementById('chat-chips').innerHTML = CHAT_CHIPS.map(([en, pl], i) =>
+                `<button type="button" onclick="sendChat(CHAT_CHIPS[${i}][currentLang === 'pl' ? 1 : 0])" class="shrink-0 text-xs font-semibold px-3 py-2 rounded-full border border-white/15 text-zinc-300 hover:border-brand hover:text-brand transition">${t(en, pl)}</button>`).join('');
+        }
+        function botReply(msg) {
+            const m = msg.toLowerCase(), r = curRental(), name = r.model;
+            if (/\bkm\b|kilomet|mileage|przebieg|limit|odometer|licznik/.test(m)) {
+                return kmLeft != null
+                    ? { text: t(`You have ${fmt(kmLeft)} km left on your ${name} (limit ${fmt(r.limit)} km).`, `Zostało Ci ${fmt(kmLeft)} km w ${name} (limit ${fmt(r.limit)} km).`) }
+                    : { text: t(`Your ${name} has a ${fmt(r.limit)} km limit. Enter your odometer reading and I'll work out what's left.`, `Twój ${name} ma limit ${fmt(r.limit)} km. Wpisz stan licznika, a policzę, ile zostało.`), action: [t('Go to Rental Status', 'Przejdź do Statusu Najmu'), 'cp-status'] };
+            }
+            if (/tyre|tire|opon|servic|serwis|book|umów|umow|workshop|warsztat/.test(m)) {
+                return { text: t('You can book a tyre change or service yourself — pick a partner workshop and a time slot. No phone calls needed.', 'Wymianę opon lub serwis umówisz sam — wybierz warsztat partnerski i godzinę. Bez dzwonienia.'), action: [t('Open Tires & Service', 'Otwórz Opony i Serwis'), 'cp-service'] };
+            }
+            if (/damage|scratch|dent|crash|accident|szkod|rys|zarysow|wgniec|kolizj|stłucz/.test(m)) {
+                return { text: t('Sorry to hear that! Drop a pin on the 3D model where it happened, add a few photos and a short description. Need it for insurance? Use the full report.', 'Przykro nam! Postaw pinezkę na modelu 3D w miejscu szkody, dodaj zdjęcia i krótki opis. Potrzebujesz tego dla ubezpieczyciela? Użyj pełnego zgłoszenia.'), action: [t('Report damage', 'Zgłoś szkodę'), 'cp-damage'] };
+            }
+            if (/contract|end|return|days|umow|koniec|zwrot|dni/.test(m)) {
+                const end = new Date(); end.setDate(end.getDate() + r.left);
+                return { text: t(`Your ${name} contract has ${r.left} days left (${r.used} used) and ends on ${end.toLocaleDateString(locale(), { dateStyle: 'long' })}.`, `Umowa na ${name}: zostało ${r.left} dni (minęło ${r.used}), koniec ${end.toLocaleDateString(locale(), { dateStyle: 'long' })}.`) };
+            }
+            return { text: t("I'm a demo assistant — I can help with mileage, tyre & service bookings, damage reports and your contract. Try one of the suggestions below.", 'Jestem asystentem demo — pomogę z kilometrami, rezerwacją opon i serwisu, zgłoszeniem szkody i umową. Wybierz jedną z sugestii poniżej.') };
+        }
+        function sendChat(preset) {
+            const input = document.getElementById('chat-input'), messages = document.getElementById('chat-messages');
+            const text = (typeof preset === 'string' ? preset : input.value).trim();
+            if (!text) return;
+            const u = document.createElement('div'); u.className = 'bubble bubble-user'; u.innerText = text;
+            messages.appendChild(u); input.value = ''; messages.scrollTop = messages.scrollHeight;
+            const typing = document.createElement('div'); typing.className = 'bubble bubble-bot typing'; typing.setAttribute('aria-label', t('Assistant is typing', 'Asystent pisze'));
+            typing.innerHTML = '<span></span><span></span><span></span>';
+            messages.appendChild(typing); messages.scrollTop = messages.scrollHeight;
+            setTimeout(() => {
+                typing.remove();
+                const reply = botReply(text);
+                const b = document.createElement('div'); b.className = 'bubble bubble-bot';
+                const p = document.createElement('p'); p.textContent = reply.text; b.appendChild(p);
+                if (reply.action) {
+                    const a = document.createElement('button'); a.type = 'button';
+                    a.className = 'mt-2 inline-flex items-center gap-2 text-sm font-bold text-brand hover:underline underline-offset-4';
+                    a.innerHTML = `<span></span><i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i>`;
+                    a.querySelector('span').textContent = reply.action[0];
+                    a.onclick = () => jumpTo(reply.action[1]);
+                    b.appendChild(a);
+                }
+                messages.appendChild(b); messages.scrollTop = messages.scrollHeight;
+            }, 800);
+        }
+
+        // ============ INIT ============
+        setLang('en');
+        observeReveals();
+    </script>
+</body>
+</html>
