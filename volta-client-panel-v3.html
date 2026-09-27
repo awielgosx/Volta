@@ -3822,7 +3822,7 @@
         .hero .pill-brand { letter-spacing: .14em; text-transform: uppercase; font-size: 11.5px; font-weight: 700; }
         .hero .h1 { margin: 20px 0 18px; }
         .hero .lead { color: rgba(255,255,255,.88); max-width: 620px; margin: 0 auto 36px; }
-        .search { width: 100%; max-width: 1040px; margin: 0 auto; background: rgba(25,22,20,.88); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--line-2); border-radius: var(--r-lg); padding: 14px; box-shadow: 0 30px 80px -30px rgba(0,0,0,.8); text-align: left; }
+        .search { position: relative; z-index: 20; width: 100%; max-width: 1040px; margin: 0 auto; background: rgba(25,22,20,.88); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--line-2); border-radius: var(--r-lg); padding: 14px; box-shadow: 0 30px 80px -30px rgba(0,0,0,.8); text-align: left; }
         .search-grid { display: grid; gap: 10px; grid-template-columns: 1fr; align-items: end; }
         @media (min-width: 640px) { .search-grid { grid-template-columns: 1fr 1fr; } }
         @media (min-width: 1024px) { .search-grid { grid-template-columns: 1.4fr 1fr 1fr 1fr auto; } }
@@ -3927,7 +3927,7 @@
         @media (min-width: 768px) { .loyalty-grid { grid-template-columns: repeat(2, 1fr); } .loyalty-grid > :last-child { grid-column: 1 / -1; } }
         @media (min-width: 1100px) { .loyalty-grid { grid-template-columns: repeat(6, 1fr); } .loyalty-grid > :nth-child(-n+2) { grid-column: span 3; } .loyalty-grid > :nth-child(n+3) { grid-column: span 2; } }
         .loyalty-tile { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow); }
-        .loyalty-tile .media { aspect-ratio: 16/8; overflow: hidden; background: var(--surface-2); }
+        .loyalty-tile .media { aspect-ratio: 16/7; overflow: hidden; background: var(--surface-2); }
         .loyalty-tile .media img { width: 100%; height: 100%; object-fit: cover; }
         .loyalty-body { padding: 20px 22px 22px; display: flex; flex-direction: column; flex-grow: 1; }
         .loyalty-body .kicker { font-size: 13px; font-weight: 600; color: var(--brand-text); margin-bottom: 4px; }
@@ -3950,10 +3950,9 @@
         @media (min-width: 900px) { .panel-top { grid-template-columns: 1fr auto; } }
         .vehicle-pick { display: flex; gap: 12px; align-items: end; flex-wrap: wrap; }
         .vehicle-pick .dd { width: 240px; }
-        /* Polish plate: blue band with the Polish flag and PL code */
+        /* Polish plate: blue EU band with the ring of stars and the PL code */
         .plate { display: inline-flex; align-items: stretch; height: 48px; border-radius: 6px; overflow: hidden; background: #fff; color: #000; border: 2px solid #111; box-shadow: 0 0 0 1px var(--line-2); font-family: 'Inter Tight', sans-serif; font-weight: 700; }
         .plate .eu { width: 28px; background: #1a3f9e; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 6px 0 4px; }
-        .plate .flag { width: 18px; height: 12px; background: linear-gradient(#fff 50%, #dc143c 50%); border-radius: 1px; }
         .plate .cc { font-size: 11px; font-weight: 700; line-height: 1; color: #fff; font-family: var(--f-body); }
         .plate .txt { display: flex; align-items: center; padding: 0 12px 0 10px; font-size: 25px; letter-spacing: .03em; white-space: nowrap; }
         .shell { display: grid; gap: 20px; align-items: start; }
@@ -4181,6 +4180,48 @@
         .declaration-item input { margin-top: 3px; }
         .sobriety { padding: 18px; border: 1.5px solid var(--brand); background: var(--brand-tint); border-radius: var(--r); font-size: 15px; }
 
+        /* Calendar popover (custom — never the OS date picker) */
+        .cal-anchor { position: relative; }
+        .cal { position: absolute; z-index: 90; top: calc(100% + 6px); left: 0; width: 300px; padding: 12px; border-radius: var(--r); background: var(--surface-2); border: 1px solid var(--line-2); box-shadow: var(--shadow-lg); animation: pop .16s var(--ease); }
+        .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .cal-head b { font-size: 15px; text-transform: capitalize; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+        .cal-grid .wd { font-size: 11.5px; color: var(--text-3); text-align: center; padding: 4px 0; text-transform: capitalize; }
+        .cal-grid button { height: 36px; border-radius: 8px; font-size: 14px; font-variant-numeric: tabular-nums; }
+        .cal-grid button:hover:not([disabled]) { background: var(--surface-3); }
+        .cal-grid button[disabled] { color: #5a524b; cursor: not-allowed; }
+        .cal-grid button.today { box-shadow: inset 0 0 0 1px var(--line-2); }
+        .cal-grid button.sel { background: var(--brand); color: #000; font-weight: 700; }
+        .date-btn i { color: var(--text-3); }
+        .dt-row { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 10px; }
+
+        /* Voucher dialog */
+        dialog.modal { padding: 0; border: 0; background: transparent; color: var(--text); width: min(440px, calc(100vw - 32px)); }
+        dialog.modal::backdrop { background: rgba(0,0,0,.7); backdrop-filter: blur(4px); }
+        .voucher-code { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-radius: var(--r); border: 1.5px dashed var(--brand); background: var(--brand-tint); font-family: var(--f-display); font-size: 24px; font-weight: 700; letter-spacing: .08em; }
+
+        /* Loyalty page: lighter, calmer — fewer tiles, more reading */
+        .lift { --surface: #24201c; --surface-2: #2c2723; --surface-3: #36302b; --line: rgba(255,236,214,.12); }
+        .lift.sunlit::before { background: radial-gradient(1100px 520px at 80% 0%, rgba(var(--gold),.20), transparent 70%), radial-gradient(900px 500px at 0% 60%, rgba(255,95,0,.10), transparent 70%); }
+        .ledger { display: grid; gap: 18px; margin-top: 40px; }
+        @media (min-width: 900px) { .ledger { grid-template-columns: 1fr 1fr; } }
+        .ledger-list { list-style: none; margin: 16px 0 0; padding: 0; }
+        .ledger-list li { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); }
+        .ledger-list li:first-child { border-top: 0; }
+        .ledger-list .ic-box { width: 36px; height: 36px; }
+        .ledger-list b { display: block; font-weight: 500; font-size: 15px; line-height: 1.35; }
+        .ledger-list span.sub { font-size: 13px; color: var(--text-3); }
+        .ledger-list .num { font-size: 17px; white-space: nowrap; }
+        .ledger-list .num.plus { color: var(--brand-text); }
+        .tier-row { display: grid; gap: 0; grid-template-columns: 1fr; margin-top: 18px; }
+        @media (min-width: 900px) { .tier-row { grid-template-columns: repeat(3, 1fr); } .tier-row > div + div { border-left: 1px solid var(--line); } }
+        .tier-row > div { padding: 18px 22px; }
+        @media (max-width: 899px) { .tier-row > div + div { border-top: 1px solid var(--line); } }
+        .tier-row .now { background: var(--brand-tint); border-radius: var(--r); }
+        .tier-row h3 { font-family: var(--f-display); font-weight: 600; font-size: 19px; margin: 8px 0 0; }
+        .tier-row ul { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 8px; font-size: 14.5px; color: var(--text-2); }
+        .tier-row li { display: flex; gap: 10px; } .tier-row li i { color: var(--brand); margin-top: 5px; font-size: 12px; }
+
         /* Toast */
         .toast-host { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); z-index: 270; display: grid; gap: 8px; width: min(460px, calc(100vw - 32px)); pointer-events: none; }
         .toast { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: var(--r); background: var(--text); color: #0d0b0a; font-size: 15px; font-weight: 500; box-shadow: var(--shadow-lg); transition: opacity .25s, transform .25s; }
@@ -4236,10 +4277,10 @@
                     <div class="search-grid">
                         <div>
                             <label for="search-loc" class="label" data-en="Pick-up location" data-pl="Miejsce odbioru">Pick-up location</label>
-                            <div class="combo">
-                                <input id="search-loc" class="field" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="loc-listbox" data-en-ph="Choose an airport..." data-pl-ph="Wybierz lotnisko..." placeholder="Choose an airport...">
-                                <ul id="loc-listbox" class="dd-list" role="listbox" hidden></ul>
-                            </div>
+                            <select id="search-loc" class="field" data-dd>
+                                <option value="" data-en="Any branch" data-pl="Dowolny oddział">Any branch</option>
+                                <option value="Warsaw Chopin (WAW)">Warsaw Chopin (WAW)</option><option value="Kraków Airport (KRK)">Kraków Airport (KRK)</option><option value="Gdańsk Airport (GDN)">Gdańsk Airport (GDN)</option><option value="Wrocław Airport (WRO)">Wrocław Airport (WRO)</option><option value="Katowice Pyrzowice (KTW)">Katowice Pyrzowice (KTW)</option><option value="Łódź Airport (LCJ)">Łódź Airport (LCJ)</option>
+                            </select>
                             <datalist id="loc-list">
                                 <option value="Gdańsk Airport (GDN)"><option value="Katowice Pyrzowice (KTW)"><option value="Kraków Airport (KRK)"><option value="Łódź Airport (LCJ)"><option value="Warsaw Chopin (WAW)"><option value="Wrocław Airport (WRO)">
                             </datalist>
@@ -4328,21 +4369,7 @@
             </div>
         </section>
 
-        <section id="fleet" class="section sunlit" aria-labelledby="fun-title">
-            <div class="wrap">
-                <div class="section-head two">
-                    <div>
-                        <span class="eyebrow" data-en="Priced per day" data-pl="Cena za dzień">Priced per day</span>
-                        <h2 id="fun-title" class="display h2" data-en="Weekend <span class='brand'>Fun Cars</span>" data-pl="Weekendowe <span class='brand'>Fun-Cary</span>">Weekend <span class="brand">Fun Cars</span></h2>
-                    </div>
-                    <p class="muted" data-en="Convertibles, icons and off-roaders. Pick up Friday, hand back Monday." data-pl="Kabriolety, ikony i terenówki. Odbiór w piątek, zwrot w poniedziałek.">Convertibles, icons and off-roaders. Pick up Friday, hand back Monday.</p>
-                </div>
-                <div class="car-grid" id="fun-grid"></div>
-                <div class="more-row" id="fun-btn-container"><button type="button" onclick="expandFunFleet()" class="btn btn-line"><span data-en="See more rides +" data-pl="Zobacz więcej fur +">See more rides +</span></button></div>
-            </div>
-        </section>
-
-        <section class="section band" aria-labelledby="youth-title">
+        <section id="fleet" class="section sunlit" aria-labelledby="youth-title">
             <div class="wrap">
                 <div class="section-head two">
                     <div>
@@ -4353,6 +4380,20 @@
                 </div>
                 <div class="car-grid" id="youth-grid"></div>
                 <div class="more-row" id="youth-btn-container"><button type="button" onclick="expandYouthFleet()" class="btn btn-line"><span data-en="See more rides +" data-pl="Zobacz więcej fur +">See more rides +</span></button></div>
+            </div>
+        </section>
+
+        <section class="section band" aria-labelledby="fun-title">
+            <div class="wrap">
+                <div class="section-head two">
+                    <div>
+                        <span class="eyebrow" data-en="Priced per day" data-pl="Cena za dzień">Priced per day</span>
+                        <h2 id="fun-title" class="display h2" data-en="Weekend <span class='brand'>Fun Cars</span>" data-pl="Weekendowe <span class='brand'>Fun-Cary</span>">Weekend <span class="brand">Fun Cars</span></h2>
+                    </div>
+                    <p class="muted" data-en="Convertibles, icons and off-roaders. Pick up Friday, hand back Monday." data-pl="Kabriolety, ikony i terenówki. Odbiór w piątek, zwrot w poniedziałek.">Convertibles, icons and off-roaders. Pick up Friday, hand back Monday.</p>
+                </div>
+                <div class="car-grid" id="fun-grid"></div>
+                <div class="more-row" id="fun-btn-container"><button type="button" onclick="expandFunFleet()" class="btn btn-line"><span data-en="See more rides +" data-pl="Zobacz więcej fur +">See more rides +</span></button></div>
             </div>
         </section>
 
@@ -4458,7 +4499,7 @@
     </div>
 
     <!-- ================= LOYALTY ================= -->
-    <div id="loyalty-page" class="page-section page-pad sunlit">
+    <div id="loyalty-page" class="page-section page-pad sunlit lift">
         <div class="wrap">
             <div style="max-width:720px">
                 <span class="eyebrow" data-en="VOLTA Rewards" data-pl="VOLTA Rewards">VOLTA Rewards</span>
@@ -4466,29 +4507,38 @@
                 <p class="lead mt-16" data-en="Points for being a great customer. Perks from brands you already use." data-pl="Punkty za bycie dobrym klientem. Benefity od marek, z których już korzystasz.">Points for being a great customer. Perks from brands you already use.</p>
             </div>
 
-            <h2 class="display" style="font-size:clamp(1.5rem,2.6vw,2rem);margin:48px 0 16px" data-en="How you earn points" data-pl="Jak zdobywasz punkty">How you earn points</h2>
-            <div class="earn-grid six" id="earn-grid"></div>
+            <div class="ledger">
+                <div class="card card-pad">
+                    <h2 class="h3" data-en="How you earn points" data-pl="Jak zdobywasz punkty">How you earn points</h2>
+                    <p class="small muted mt-4" data-en="Only for things we can verify — no self-reporting." data-pl="Tylko za rzeczy, które możemy sprawdzić — bez samodzielnego raportowania.">Only for things we can verify — no self-reporting.</p>
+                    <ul class="ledger-list" id="earn-grid"></ul>
+                </div>
+                <div class="card card-pad">
+                    <h2 class="h3" data-en="What points get you" data-pl="Co dają punkty">What points get you</h2>
+                    <p class="small muted mt-4" data-en="Redeem in the Rewards tab of your Client Panel." data-pl="Odbierzesz w zakładce Nagrody w Panelu Klienta.">Redeem in the Rewards tab of your Client Panel.</p>
+                    <ul class="ledger-list" id="loyalty-redeem"></ul>
+                </div>
+            </div>
 
-            <h2 class="display" style="font-size:clamp(1.5rem,2.6vw,2rem);margin:56px 0 16px" data-en="What points get you" data-pl="Co dają punkty">What points get you</h2>
-            <div class="redeem-grid" id="loyalty-redeem"></div>
-
-            <h2 class="display" style="font-size:clamp(1.5rem,2.6vw,2rem);margin:56px 0 16px" data-en="Partner programs" data-pl="Programy partnerskie">Partner programs</h2>
+            <h2 class="display" style="font-size:clamp(1.5rem,2.6vw,2rem);margin:64px 0 18px" data-en="Partner programs" data-pl="Programy partnerskie">Partner programs</h2>
             <div class="loyalty-grid" id="loyalty-grid"></div>
 
-            <h2 class="display" style="font-size:clamp(1.5rem,2.6vw,2rem);margin:56px 0 6px" data-en="Status levels" data-pl="Poziomy statusu">Status levels</h2>
-            <p class="muted mb-24" data-en="Your status follows the points you've earned in total — spending points never lowers it." data-pl="Status zależy od wszystkich zdobytych punktów — wydawanie punktów go nie obniża.">Your status follows the points you've earned in total — spending points never lowers it.</p>
-            <div class="tiers">
-                <div class="tier"><span class="pill pill-soft">0 – 4,999</span><h3>Start</h3><ul>
-                    <li><i class="fa-solid fa-check" aria-hidden="true"></i><span data-en="No young-driver surcharge" data-pl="Bez dopłaty za wiek">No young-driver surcharge</span></li>
-                    <li><i class="fa-solid fa-check" aria-hidden="true"></i><span data-en="Link up to 2 partners" data-pl="Połącz do 2 partnerów">Link up to 2 partners</span></li></ul></div>
-                <div class="tier current"><span class="pill pill-brand">5,000 – 19,999</span><h3>Plus</h3><ul>
-                    <li><i class="fa-solid fa-check" aria-hidden="true"></i><span data-en="Free car-class upgrade twice a year" data-pl="Darmowy upgrade klasy auta 2× w roku">Free car-class upgrade twice a year</span></li>
-                    <li><i class="fa-solid fa-check" aria-hidden="true"></i><span data-en="Link all 5 partners" data-pl="Połącz wszystkich 5 partnerów">Link all 5 partners</span></li>
-                    <li><i class="fa-solid fa-check" aria-hidden="true"></i><span data-en="Priority workshop slots" data-pl="Priorytetowe terminy w warsztatach">Priority workshop slots</span></li></ul></div>
-                <div class="tier"><span class="pill pill-soft">20,000+</span><h3>Elite</h3><ul>
-                    <li><i class="fa-solid fa-check" aria-hidden="true"></i><span data-en="One free Fun Car weekend a year" data-pl="Darmowy weekend z Fun-Carem raz w roku">One free Fun Car weekend a year</span></li>
-                    <li><i class="fa-solid fa-check" aria-hidden="true"></i><span data-en="Zero excess on damage claims" data-pl="Zerowy udział własny w szkodach">Zero excess on damage claims</span></li>
-                    <li><i class="fa-solid fa-check" aria-hidden="true"></i><span data-en="Dedicated assistant line" data-pl="Dedykowana linia asystenta">Dedicated assistant line</span></li></ul></div>
+            <div class="card card-pad" style="margin-top:64px">
+                <h2 class="h3" style="font-size:22px" data-en="Status levels" data-pl="Poziomy statusu">Status levels</h2>
+                <p class="muted small mt-4" data-en="Your status follows all the points you've ever earned — spending points never lowers it." data-pl="Status zależy od wszystkich zdobytych punktów — wydawanie punktów go nie obniża.">Your status follows all the points you've ever earned — spending points never lowers it.</p>
+                <div class="tier-row">
+                    <div><span class="pill pill-soft">0 – 4,999</span><h3>Start</h3><ul>
+                        <li><i class="fa-solid fa-check" aria-hidden="true"></i><span data-en="No young-driver surcharge" data-pl="Bez dopłaty za wiek">No young-driver surcharge</span></li>
+                        <li><i class="fa-solid fa-check" aria-hidden="true"></i><span data-en="Link up to 2 partners" data-pl="Połącz do 2 partnerów">Link up to 2 partners</span></li></ul></div>
+                    <div class="now"><span class="pill pill-brand"><span data-en="You · 5,000 – 19,999" data-pl="Ty · 5 000 – 19 999">You · 5,000 – 19,999</span></span><h3>Plus</h3><ul>
+                        <li><i class="fa-solid fa-check" aria-hidden="true"></i><span data-en="One free car-class upgrade a year" data-pl="Jeden darmowy upgrade klasy auta w roku">One free car-class upgrade a year</span></li>
+                        <li><i class="fa-solid fa-check" aria-hidden="true"></i><span data-en="Link all 5 partners" data-pl="Połącz wszystkich 5 partnerów">Link all 5 partners</span></li>
+                        <li><i class="fa-solid fa-check" aria-hidden="true"></i><span data-en="Priority workshop slots" data-pl="Priorytetowe terminy w warsztatach">Priority workshop slots</span></li></ul></div>
+                    <div><span class="pill pill-soft">20,000+</span><h3>Elite</h3><ul>
+                        <li><i class="fa-solid fa-check" aria-hidden="true"></i><span data-en="10% off every Fun Car rental" data-pl="10% rabatu na każdy wynajem Fun-Cara">10% off every Fun Car rental</span></li>
+                        <li><i class="fa-solid fa-check" aria-hidden="true"></i><span data-en="Zero excess on damage claims" data-pl="Zerowy udział własny w szkodach">Zero excess on damage claims</span></li>
+                        <li><i class="fa-solid fa-check" aria-hidden="true"></i><span data-en="Dedicated assistant line" data-pl="Dedykowana linia asystenta">Dedicated assistant line</span></li></ul></div>
+                </div>
             </div>
             <div class="card card-pad row row-wrap between" style="margin-top:40px">
                 <div><h3 class="h3" data-en="See your points and connect partners" data-pl="Zobacz punkty i połącz partnerów">See your points and connect partners</h3><p class="muted small mt-4" data-en="Everything is in the Rewards tab of your Client Panel." data-pl="Wszystko znajdziesz w zakładce Nagrody w Panelu Klienta.">Everything is in the Rewards tab of your Client Panel.</p></div>
@@ -4513,7 +4563,7 @@
                             <option value="mini">Mini Cabrio</option>
                         </select>
                     </div>
-                    <div class="plate" role="img" id="plate" aria-label="Registration WA 4203X"><span class="eu" aria-hidden="true"><span class="flag"></span><span class="cc">PL</span></span><span class="txt" id="plate-txt">WA 4203X</span></div>
+                    <div class="plate" role="img" id="plate" aria-label="Registration WA 4203X"><span class="eu" aria-hidden="true"><svg class="stars" viewBox="0 0 20 20" width="17" height="17" fill="#ffd400"><circle cx="17.00" cy="10.00" r="1.25"/><circle cx="16.06" cy="13.50" r="1.25"/><circle cx="13.50" cy="16.06" r="1.25"/><circle cx="10.00" cy="17.00" r="1.25"/><circle cx="6.50" cy="16.06" r="1.25"/><circle cx="3.94" cy="13.50" r="1.25"/><circle cx="3.00" cy="10.00" r="1.25"/><circle cx="3.94" cy="6.50" r="1.25"/><circle cx="6.50" cy="3.94" r="1.25"/><circle cx="10.00" cy="3.00" r="1.25"/><circle cx="13.50" cy="3.94" r="1.25"/><circle cx="16.06" cy="6.50" r="1.25"/></svg><span class="cc">PL</span></span><span class="txt" id="plate-txt">WA 4203X</span></div>
                 </div>
             </div>
 
@@ -4635,14 +4685,11 @@
                                     <div class="form-grid">
                                         <div class="full"><span class="label" data-en="Type of damage" data-pl="Rodzaj szkody">Type of damage</span><div class="chips" id="dmg-types"></div></div>
                                         <div><span class="label" data-en="How bad is it?" data-pl="Jak duża szkoda?">How bad is it?</span><div class="seg" id="dmg-severity" role="radiogroup"></div></div>
-                                        <div><label for="dmg-when" class="label" data-en="When did it happen?" data-pl="Kiedy to się stało?">When did it happen?</label>
-                                            <select id="dmg-when" class="field" data-dd>
-                                                <option value="now" data-en="Just now" data-pl="Przed chwilą">Just now</option>
-                                                <option value="today" data-en="Earlier today" data-pl="Dziś, wcześniej">Earlier today</option>
-                                                <option value="yesterday" data-en="Yesterday" data-pl="Wczoraj">Yesterday</option>
-                                                <option value="week" data-en="In the last 7 days" data-pl="W ostatnich 7 dniach">In the last 7 days</option>
-                                                <option value="older" data-en="More than a week ago" data-pl="Ponad tydzień temu">More than a week ago</option>
-                                            </select></div>
+                                        <div><span class="label" id="dmg-when-lbl" data-en="When did it happen?" data-pl="Kiedy to się stało?">When did it happen?</span>
+                                            <div class="dt-row">
+                                                <div class="cal-anchor"><button type="button" id="dmg-date" class="field dd-btn date-btn" aria-labelledby="dmg-when-lbl dmg-date-val" onclick="openCalendar(this, { value: dmgDate, min: daysFromNow(-90), max: new Date(), onPick: d => { dmgDate = d; renderDmgWhen(); } })"><span class="dd-val" id="dmg-date-val"></span><i class="fa-regular fa-calendar" aria-hidden="true"></i></button></div>
+                                                <div><label for="dmg-time" class="sr-only" data-en="Time" data-pl="Godzina">Time</label><select id="dmg-time" class="field" data-dd></select></div>
+                                            </div></div>
                                         <div class="full"><label for="dmg-where" class="label" data-en="Where?" data-pl="Gdzie?">Where?</label><input type="text" id="dmg-where" class="field" data-en-ph="e.g. Galeria Mokotów car park, level -2" data-pl-ph="np. parking Galerii Mokotów, poziom -2" placeholder="e.g. Galeria Mokotów car park, level -2"></div>
                                         <div class="full"><label for="damage-desc" class="label" data-en="Damage description" data-pl="Opis uszkodzenia">Damage description</label><textarea id="damage-desc" required class="field" data-en-ph="e.g. a ~5 cm scratch on the left front fender..." data-pl-ph="Np. zarysowanie na lewym błotniku o długości ok. 5 cm..." placeholder="e.g. a ~5 cm scratch on the left front fender..."></textarea></div>
                                     </div>
@@ -4976,6 +5023,18 @@
         <div class="drawer-body" id="sl-body"></div>
     </aside>
 
+    <dialog id="voucher-dialog" class="modal" aria-labelledby="vd-title">
+        <div class="card card-pad" style="text-align:center">
+            <span class="ic-box" style="width:56px;height:56px;margin:0 auto 14px;font-size:22px"><i class="fa-solid fa-gift" aria-hidden="true"></i></span>
+            <h2 id="vd-title" class="h3" style="font-size:22px"></h2>
+            <p class="muted small mt-4" id="vd-desc"></p>
+            <div class="voucher-code mt-24"><span id="vd-code"></span><button type="button" class="icon-btn" onclick="copyVoucher()" aria-label="Copy code"><i class="fa-regular fa-copy" aria-hidden="true"></i></button></div>
+            <p class="small mt-12" id="vd-valid"></p>
+            <p class="small muted mt-12" id="vd-mail"></p>
+            <button type="button" class="btn btn-primary btn-block mt-24" onclick="document.getElementById('voucher-dialog').close()"><span data-en="Done" data-pl="Gotowe">Done</span></button>
+        </div>
+    </dialog>
+
     <div id="processing" class="processing" hidden><div class="card"><div class="spinner" aria-hidden="true"></div><p class="h3" id="proc-title"></p><p class="muted small mt-8" id="proc-sub"></p></div></div>
     <div id="toast" class="toast-host" role="status" aria-live="polite"></div>
 
@@ -4990,7 +5049,7 @@
             ['en', 'pl'].forEach(l => { const b = document.getElementById('lang-' + l); b.classList.toggle('active', l === lang); b.setAttribute('aria-pressed', l === lang); });
             refreshDropdowns();
             renderCars(); renderResults(); renderPartners(); renderStats(); renderOverview(); renderShortlist(); renderBooking();
-            renderDamageForm(); renderWizard(); renderPhotos();
+            renderDamageForm(); renderWizard(); renderPhotos(); if (typeof renderDmgWhen === 'function') renderDmgWhen();
             renderServiceTypes(); renderServicePoints(); renderSlots(); renderBookings();
             renderRewards(); renderChatChips(); updateClaimProgress();
         }
@@ -5076,36 +5135,51 @@
             if (!e.target.closest('.combo')) locCombo.close();
         });
 
-        // Pick-up location combobox (replaces the native datalist popup)
-        const locCombo = (function () {
-            const input = document.getElementById('search-loc'), list = document.getElementById('loc-listbox');
-            const all = [...document.querySelectorAll('#loc-list option')].map(o => o.value);
-            const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l').replace(/Ł/g, 'L').toLowerCase();
-            let items = [], active = -1;
-            function render() {
-                const q = norm(input.value.trim());
-                items = all.filter(v => !q || norm(v).includes(q));
-                list.innerHTML = items.length ? items.map((v, i) => { const m = v.match(/^(.*) \((\w+)\)$/); return `<li role="option" id="loc-o${i}" data-v="${esc(v)}" aria-selected="${v === input.value}" class="${i === active ? 'active' : ''}"><span><i class="fa-solid fa-plane-departure" style="visibility:visible;color:var(--dim);margin-right:10px" aria-hidden="true"></i>${esc(m ? m[1] : v)}</span><span class="sub">${m ? m[2] : ''}</span></li>`; }).join('')
-                    : `<li class="empty" aria-disabled="true">${t('No airports match', 'Brak pasujących lotnisk')}</li>`;
-                if (active >= 0) input.setAttribute('aria-activedescendant', 'loc-o' + active); else input.removeAttribute('aria-activedescendant');
+        const locCombo = { close() {}, render() {} }; // pick-up location is now a regular custom dropdown
+
+        // ============ CALENDAR (custom date picker, Monday-first, localised) ============
+        let openCal = null;
+        function closeCalendar() { if (openCal) { openCal.el.remove(); openCal = null; } }
+        const sameDay = (a, b) => a && b && a.toDateString() === b.toDateString();
+        // opts: { value: Date, min: Date, max: Date, allow: d => bool, onPick: d => void }
+        function openCalendar(anchor, opts) {
+            closeCalendar();
+            const host = anchor.closest('.cal-anchor') || anchor.parentElement;
+            const el = document.createElement('div'); el.className = 'cal'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', t('Choose a date', 'Wybierz datę'));
+            host.appendChild(el);
+            const r = host.getBoundingClientRect(); if (r.left + 300 > window.innerWidth - 12) el.style.left = 'auto', el.style.right = '0';
+            const min = opts.min ? new Date(opts.min.getFullYear(), opts.min.getMonth(), opts.min.getDate()) : null;
+            const max = opts.max ? new Date(opts.max.getFullYear(), opts.max.getMonth(), opts.max.getDate()) : null;
+            let view = new Date((opts.value || opts.min || new Date()).getFullYear(), (opts.value || opts.min || new Date()).getMonth(), 1);
+            const ok = d => (!min || d >= min) && (!max || d <= max) && (!opts.allow || opts.allow(d));
+            function draw(focusDay) {
+                const y = view.getFullYear(), m = view.getMonth(), first = (new Date(y, m, 1).getDay() + 6) % 7, days = new Date(y, m + 1, 0).getDate();
+                const wd = [...Array(7)].map((_, i) => new Date(2024, 0, 1 + i).toLocaleDateString(locale(), { weekday: 'short' }).slice(0, 2));
+                const prevOk = !min || new Date(y, m, 0) >= min, nextOk = !max || new Date(y, m + 1, 1) <= max;
+                el.innerHTML = `<div class="cal-head"><button type="button" class="icon-btn" data-nav="-1" ${prevOk ? '' : 'disabled'} aria-label="${t('Previous month', 'Poprzedni miesiąc')}"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button><b>${view.toLocaleDateString(locale(), { month: 'long', year: 'numeric' })}</b><button type="button" class="icon-btn" data-nav="1" ${nextOk ? '' : 'disabled'} aria-label="${t('Next month', 'Następny miesiąc')}"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button></div>
+                    <div class="cal-grid">${wd.map(w => `<span class="wd">${w}</span>`).join('')}${'<span></span>'.repeat(first)}${[...Array(days)].map((_, i) => { const d = new Date(y, m, i + 1); return `<button type="button" data-d="${i + 1}" class="${sameDay(d, new Date()) ? 'today' : ''} ${sameDay(d, opts.value) ? 'sel' : ''}" ${ok(d) ? '' : 'disabled'} aria-label="${d.toLocaleDateString(locale(), { dateStyle: 'full' })}">${i + 1}</button>`; }).join('')}</div>`;
+                const f = el.querySelector(focusDay ? `[data-d="${focusDay}"]:not([disabled])` : '.sel:not([disabled])') || el.querySelector('.cal-grid button:not([disabled])');
+                if (f) f.focus({ preventScroll: true });
             }
-            function open() { closeDropdowns(api); list.hidden = false; input.setAttribute('aria-expanded', 'true'); render(); }
-            function close() { list.hidden = true; input.setAttribute('aria-expanded', 'false'); active = -1; }
-            function pick(v) { input.value = v; close(); }
-            input.addEventListener('focus', open);
-            input.addEventListener('click', open);
-            input.addEventListener('input', () => { active = 0; open(); });
-            input.addEventListener('keydown', e => {
-                if (e.key === 'ArrowDown') { e.preventDefault(); if (list.hidden) open(); active = Math.min(items.length - 1, active + 1); render(); }
-                else if (e.key === 'ArrowUp') { e.preventDefault(); active = Math.max(0, active - 1); render(); }
-                else if (e.key === 'Enter' && !list.hidden && items[active]) { e.preventDefault(); pick(items[active]); }
-                else if (e.key === 'Escape' || e.key === 'Tab') close();
-                const a = list.querySelector('.active'); if (a) a.scrollIntoView({ block: 'nearest' });
+            el.addEventListener('click', e => {
+                e.stopPropagation();
+                const nav = e.target.closest('[data-nav]'); if (nav && !nav.disabled) { view.setMonth(view.getMonth() + +nav.dataset.nav); draw(); return; }
+                const b = e.target.closest('[data-d]'); if (b && !b.disabled) { const d = new Date(view.getFullYear(), view.getMonth(), +b.dataset.d); closeCalendar(); opts.onPick(d); anchor.focus && anchor.focus(); }
             });
-            list.addEventListener('mousedown', e => { const li = e.target.closest('li[data-v]'); if (li) { e.preventDefault(); pick(li.dataset.v); } });
-            const api = { close, render };
-            return api;
-        })();
+            el.addEventListener('keydown', e => {
+                const b = e.target.closest('[data-d]');
+                if (e.key === 'Escape') { e.preventDefault(); closeCalendar(); anchor.focus(); return; }
+                if (!b) return;
+                const step = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[e.key]; if (!step) return;
+                e.preventDefault(); const nd = +b.dataset.d + step, dim = new Date(view.getFullYear(), view.getMonth() + 1, 0).getDate();
+                if (nd < 1) { view.setMonth(view.getMonth() - 1); draw(new Date(view.getFullYear(), view.getMonth() + 1, 0).getDate() + nd); }
+                else if (nd > dim) { view.setMonth(view.getMonth() + 1); draw(nd - dim); }
+                else { const n = el.querySelector(`[data-d="${nd}"]`); if (n) n.focus(); }
+            });
+            openCal = { el, anchor };
+            draw();
+        }
+        document.addEventListener('click', e => { if (openCal && !openCal.el.contains(e.target) && !openCal.anchor.contains(e.target)) closeCalendar(); });
 
         // ============ FLEET ============
         // Swap any URL in CAR_IMG for a real photo of that exact model to make names + images match 1:1.
@@ -5163,9 +5237,9 @@
         const YOUTH = [
             {n:"Skoda Scala", cat:"hatchback", de:"Everyday precision", dp:"Codzienna precyzja", price:1250, per_en:"mo", per_pl:"msc", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRX9OFEA2dppzYG3NQKLL-Uyq4po0_aowO8kiq7ApgYWxGlKySYapv6VLD8&s=10"},
             {n:"Suzuki Swift", cat:"hatchback", de:"Urban instinct", dp:"Miejski instynkt", price:980, per_en:"mo", per_pl:"msc", img:"https://www.globalsuzuki.com/pan-europeantestdrive2403/swift/presskit/img/thumb_mov_02.jpg"},
-            {n:"Peugeot 408", cat:"suv", de:"Avant-garde SUV", dp:"Awangardowy SUV", price:1550, per_en:"mo", per_pl:"msc", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4z_T2aojadOfKmu4jev0pFNeOW340RUuxsDTdqM1CpYVbDI5-tIV1cds&s=10"},
-            {n:"Nissan Qashqai", cat:"suv", de:"SUV COMFORT", dp:"KOMFORT SUV", price:1400, per_en:"mo", per_pl:"msc", img:"https://www.edmunds.com/assets/m/cs/cms/354e5e44-910c-4ccf-a26b-697fe0f68d59/New+e-POWER+on+Qashqai+_2025_14_1600.jpg"},
             {n:"Kia Stonic", cat:"suv", de:"URBAN AGILITY", dp:"MIEJSKA ZWINNOŚĆ", price:1100, per_en:"mo", per_pl:"msc", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVXaO1eDxCeQshhXgXCiWXRpxSiyGVnJBvUHA3KjNYORT9f3RvJWlYJn0&s=10"},
+            {n:"Nissan Qashqai", cat:"suv", de:"SUV COMFORT", dp:"KOMFORT SUV", price:1400, per_en:"mo", per_pl:"msc", img:"https://www.edmunds.com/assets/m/cs/cms/354e5e44-910c-4ccf-a26b-697fe0f68d59/New+e-POWER+on+Qashqai+_2025_14_1600.jpg"},
+            {n:"Peugeot 408", cat:"suv", de:"Avant-garde SUV", dp:"Awangardowy SUV", price:1550, per_en:"mo", per_pl:"msc", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4z_T2aojadOfKmu4jev0pFNeOW340RUuxsDTdqM1CpYVbDI5-tIV1cds&s=10"},
             {n:"Toyota Yaris", cat:"hatchback", de:"HYBRID POWER", dp:"MOC HYBRYDY", price:1050, per_en:"mo", per_pl:"msc", img:"https://speedme.ru/uploads/en_materials/big_webp/n6NfeGwZfrbjN1ALXByO.webp"}
         ];
         function renderCars() {
@@ -5256,11 +5330,12 @@
             ['fa-car',            250,  'A car booked in the app',       'Auto zarezerwowane w aplikacji'],
             ['fa-user-plus',      2000, 'A friend you refer signs a contract', 'Polecony znajomy podpisuje umowę']
         ];
+        // Ordered by cost. ~16 paid months buys a Fun Car day; a full weekend is a long-term goal.
         const REDEEM = [
-            { id: 'day',     cost: 3000,  icon: 'fa-sun',        en: ['Free Fun Car day', 'Any car from Weekend Fun Cars for one day.'], pl: ['Darmowy dzień Fun-Carem', 'Dowolne auto z Weekendowych Fun-Carów na dzień.'] },
-            { id: 'invoice', cost: 4000,  icon: 'fa-receipt',    en: ['300 PLN off your next invoice', 'Taken off your next monthly fee automatically.'], pl: ['300 PLN rabatu na fakturę', 'Odliczone automatycznie od najbliższej opłaty.'] },
+            { id: 'invoice', cost: 3000,  icon: 'fa-receipt',    en: ['300 PLN off your next invoice', 'Taken off your next monthly fee automatically.'], pl: ['300 PLN rabatu na fakturę', 'Odliczone automatycznie od najbliższej opłaty.'] },
             { id: 'upgrade', cost: 5000,  icon: 'fa-arrow-up',   en: ['Weekend car-class upgrade', 'The next class up, for one weekend.'], pl: ['Upgrade klasy na weekend', 'Auto klasę wyżej na jeden weekend.'] },
-            { id: 'weekend', cost: 12000, icon: 'fa-champagne-glasses', en: ['Full Fun Car weekend', 'Friday to Monday in a convertible or icon, on us.'], pl: ['Cały weekend Fun-Carem', 'Od piątku do poniedziałku kabrioletem lub ikoną — na nasz koszt.'] }
+            { id: 'day',     cost: 8000,  icon: 'fa-sun',        en: ['Free Fun Car day', 'Any car from Weekend Fun Cars for one day.'], pl: ['Darmowy dzień Fun-Carem', 'Dowolne auto z Weekendowych Fun-Carów na dzień.'] },
+            { id: 'weekend', cost: 20000, icon: 'fa-champagne-glasses', en: ['Full Fun Car weekend', 'Friday to Monday in a convertible or icon, on us.'], pl: ['Cały weekend Fun-Carem', 'Od piątku do poniedziałku kabrioletem lub ikoną — na nasz koszt.'] }
         ];
         function renderPartners() {
             document.getElementById('partner-strip').innerHTML = PARTNERS.map(p => `
@@ -5278,8 +5353,8 @@
                         <div class="perk"><i class="fa-solid fa-gift" aria-hidden="true"></i><div><b>${tx(p.get)}</b><span>${tx(p.how)}</span></div></div>
                     </div>
                 </article>`).join('');
-            document.getElementById('earn-grid').innerHTML = EARN.map(e => `<div class="earn"><i class="fa-solid ${e[0]}" aria-hidden="true"></i><span class="num">+${fmt(e[1])}</span><span>${t(e[2], e[3])}</span></div>`).join('');
-            document.getElementById('loyalty-redeem').innerHTML = REDEEM.map(r => { const L = tx([r.en, r.pl]); return `<div class="redeem"><span class="ic-box"><i class="fa-solid ${r.icon}" aria-hidden="true"></i></span><b class="mt-8">${L[0]}</b><p>${L[1]}</p><div class="row"><span class="num">${fmt(r.cost)} <span class="xs muted">${t('points', 'pkt')}</span></span></div></div>`; }).join('');
+            document.getElementById('earn-grid').innerHTML = EARN.map(e => `<li><span class="ic-box"><i class="fa-solid ${e[0]}" aria-hidden="true"></i></span><b>${t(e[2], e[3])}</b><span class="num plus">+${fmt(e[1])}</span></li>`).join('');
+            document.getElementById('loyalty-redeem').innerHTML = REDEEM.map(r => { const L = tx([r.en, r.pl]); return `<li><span class="ic-box"><i class="fa-solid ${r.icon}" aria-hidden="true"></i></span><div><b>${L[0]}</b><span class="sub">${L[1]}</span></div><span class="num">${fmt(r.cost)} <span class="xs muted">${t('pts', 'pkt')}</span></span></li>`; }).join('');
         }
         function connectPartner(id) {
             const p = PARTNERS.find(x => x.id === id); linked.add(id);
@@ -5410,16 +5485,29 @@
         const TILE_SOURCES = [
             { url: 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', attr: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, HOT', sub: 'abc' },
             { url: 'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', attr: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, OSM France', sub: 'abc' },
-            { url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', attr: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' },
             { url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', attr: 'Tiles &copy; Esri — Esri, HERE, Garmin, &copy; OpenStreetMap contributors' }
         ];
         let serviceMap = null, tileLayer = null, tileIdx = 0, tileErrors = 0, serviceMarkers = [], svcType = 'tyres', selWs = 0, selDay = null, selTime = null;
         const bookings = [];
+        // Resilient tiles: a failed tile retries on the server's other mirrors; a layer that is loading tiles is never
+        // removed. We only move to the next source if nothing at all has loaded from the current one.
+        let tilesLoaded = 0, switchTimer = null;
         function addTiles() {
             if (tileLayer) serviceMap.removeLayer(tileLayer);
-            const s = TILE_SOURCES[tileIdx]; tileErrors = 0;
-            tileLayer = L.tileLayer(s.url, { maxZoom: 19, attribution: s.attr, subdomains: s.sub || 'abc', crossOrigin: true, referrerPolicy: 'strict-origin-when-cross-origin' }).addTo(serviceMap);
-            tileLayer.on('tileerror', () => { if (++tileErrors >= 2 && tileIdx < TILE_SOURCES.length - 1) { tileIdx++; addTiles(); } });
+            const s = TILE_SOURCES[tileIdx]; tileErrors = 0; tilesLoaded = 0;
+            tileLayer = L.tileLayer(s.url, { maxZoom: 19, attribution: s.attr, subdomains: s.sub || 'abc', keepBuffer: 4, updateWhenIdle: false }).addTo(serviceMap);
+            tileLayer.on('tileload', () => { tilesLoaded++; });
+            tileLayer.on('tileerror', e => {
+                tileErrors++;
+                const tile = e.tile, tries = (tile._tries || 0) + 1; tile._tries = tries;
+                if (tries <= 3) {
+                    const url = tileLayer.getTileUrl(e.coords), subs = (s.sub || '').split('');
+                    const mirror = subs.length ? url.replace(/\/\/[a-c]\./, '//' + subs[(subs.indexOf((url.match(/\/\/([a-c])\./) || [])[1]) + tries) % subs.length] + '.') : url;
+                    setTimeout(() => { tile.src = mirror + (mirror.includes('?') ? '&' : '?') + 'r=' + tries; }, 400 * tries);
+                }
+                clearTimeout(switchTimer);
+                switchTimer = setTimeout(() => { if (tilesLoaded === 0 && tileIdx < TILE_SOURCES.length - 1) { tileIdx++; addTiles(); } }, 2500);
+            });
         }
         function initServiceMap() {
             if (typeof L === 'undefined') return;
@@ -5487,11 +5575,12 @@
             [-65, 'Referral — a friend signed a contract', 'Polecenie — znajomy podpisał umowę', 2000]
         ].map(h => ({ date: daysFromNow(h[0]), en: h[1], pl: h[2], pts: h[3] }));
         const vouchers = [];
+        const CUSTOMER = { first: 'Ola', last: 'Nowak', email: 'ola.nowak@example.com' };
         const tierOf = n => n >= ELITE_AT ? 'Elite' : n >= PLUS_AT ? 'Plus' : 'Start';
         function addPoints(n, en, pl) { points += n; lifetime += n; pointsLog.unshift({ date: new Date(), en, pl, pts: n }); renderRewards(); }
         function renderRewards() {
             setTxt('rw-points', fmt(points));
-            setTxt('rw-worth', t(`Enough for ${Math.floor(points / 3000)} free Fun Car days — or pick something below.`, `Wystarczy na ${Math.floor(points / 3000)} darmowe dni Fun-Carem — albo wybierz coś poniżej.`));
+            setTxt('rw-worth', t(`Pick something below — you can redeem ${REDEEM.filter(r => points >= r.cost).length} of 4 rewards right now.`, `Wybierz coś poniżej — możesz od razu odebrać ${REDEEM.filter(r => points >= r.cost).length} z 4 nagród.`));
             const tier = tierOf(lifetime), next = tier === 'Start' ? PLUS_AT : ELITE_AT;
             setTxt('rw-tier', tier);
             setTxt('rw-next', tier === 'Elite' ? t('Top level', 'Najwyższy poziom') : t(`${fmt(next - lifetime)} to ${tier === 'Start' ? 'Plus' : 'Elite'}`, `${fmt(next - lifetime)} do ${tier === 'Start' ? 'Plus' : 'Elite'}`));
@@ -5499,7 +5588,7 @@
             setTxt('rw-lifetime', t(`${fmt(lifetime)} points earned in total. Spending points never lowers your status.`, `Łącznie zdobyto ${fmt(lifetime)} pkt. Wydawanie punktów nie obniża statusu.`));
             document.getElementById('rw-redeem').innerHTML = REDEEM.map(r => { const L = tx([r.en, r.pl]); const can = points >= r.cost; return `<div class="redeem"><span class="ic-box"><i class="fa-solid ${r.icon}" aria-hidden="true"></i></span><b class="mt-8">${L[0]}</b><p>${L[1]}</p>
                 <div class="row between"><span class="num">${fmt(r.cost)} <span class="xs muted">${t('pts', 'pkt')}</span></span><button type="button" class="btn btn-sm ${can ? 'btn-light' : 'btn-line'}" ${can ? '' : 'disabled'} onclick="redeem('${r.id}')">${can ? t('Redeem', 'Odbierz') : t(`${fmt(r.cost - points)} to go`, `brakuje ${fmt(r.cost - points)}`)}</button></div></div>`; }).join('');
-            document.getElementById('rw-vouchers').innerHTML = vouchers.length ? `<p class="label mt-8">${t('Your vouchers', 'Twoje vouchery')}</p>` + vouchers.map(v => `<div class="list-row"><i class="fa-solid fa-ticket" style="color:var(--ok)" aria-hidden="true"></i><div class="grow"><b class="small">${tx([v.r.en, v.r.pl])[0]}</b><p class="xs muted">${t('Code', 'Kod')} ${v.code} · ${t('valid until', 'ważny do')} ${fmtDate(daysFromNow(180))}</p></div></div>`).join('') : '';
+            document.getElementById('rw-vouchers').innerHTML = vouchers.length ? `<p class="label mt-8">${t('Your vouchers', 'Twoje vouchery')}</p>` + vouchers.map(v => `<div class="list-row"><i class="fa-solid fa-ticket" style="color:var(--ok)" aria-hidden="true"></i><div class="grow"><b class="small">${tx([v.r.en, v.r.pl])[0]}</b><p class="xs muted">${t('Code', 'Kod')} ${v.code} · ${t('valid until', 'ważny do')} ${fmtDate(daysFromNow(180))} · ${t('copy sent to', 'kopia na')} ${CUSTOMER.email}</p></div></div>`).join('') : '';
             setTxt('rw-linked', `${linked.size} / ${PARTNERS.length} ${t('active', 'aktywne')}`);
             document.getElementById('rw-partners').innerHTML = PARTNERS.map(p => `<div class="perk-row"><img src="${p.img}" alt="" loading="lazy"><div><b>${tx(p.title)}</b><span>${tx(p.get)}</span></div>
                 ${linked.has(p.id) ? `<span class="pill pill-ok"><i class="fa-solid fa-check" aria-hidden="true"></i>${t('Active', 'Aktywne')}</span>` : `<button type="button" class="btn btn-sm btn-line" onclick="connectPartner('${p.id}')">${t('Connect', 'Połącz')}</button>`}</div>`).join('');
@@ -5508,8 +5597,14 @@
         function redeem(id) {
             const r = REDEEM.find(x => x.id === id); if (points < r.cost) return;
             points -= r.cost; vouchers.push({ r, code: 'VLT-' + Math.random().toString(36).slice(2, 7).toUpperCase() });
-            renderRewards(); toast(t(`Redeemed: ${r.en[0]}`, `Odebrano: ${r.pl[0]}`), 'fa-gift');
+            renderRewards();
+            const v = vouchers[vouchers.length - 1], L = tx([r.en, r.pl]);
+            setTxt('vd-title', L[0]); setTxt('vd-desc', L[1]); setTxt('vd-code', v.code);
+            setTxt('vd-valid', t(`Valid until ${longDate(daysFromNow(180))}`, `Ważny do ${longDate(daysFromNow(180))}`));
+            document.getElementById('vd-mail').innerHTML = `<i class="fa-regular fa-envelope" aria-hidden="true"></i>&nbsp; ${t('A copy has been sent to', 'Kopia została wysłana na')} <b>${CUSTOMER.email}</b>`;
+            document.getElementById('voucher-dialog').showModal();
         }
+        function copyVoucher() { const c = document.getElementById('vd-code').textContent; try { navigator.clipboard.writeText(c); } catch (e) {} toast(t('Code copied', 'Kod skopiowany'), 'fa-copy'); }
 
         // ============ BOOKING FLOW (demo: configure → dates & delivery → details → sign → pay) ============
         const COLOR_BASE = [
@@ -5533,8 +5628,8 @@
             return out;
         }
         const INTERIORS = [['fabric', 'Black fabric', 'Czarna tkanina', '#1e1e1e', 0], ['lblack', 'Black leather', 'Czarna skóra', '#0b0b0b', 1], ['lwhite', 'White leather', 'Biała skóra', '#ede7de', 1], ['lbrown', 'Cognac leather', 'Koniakowa skóra', '#7a4526', 1]];
-        const PRICING = { fun: { prem: 30, leather: 40, delivery: 99, deposit: 1000 }, youth: { prem: 59, leather: 79, delivery: 0, deposit: 1500 }, termDisc: { 12: 0, 24: 0.05, 36: 0.10 } };
-        const AIRPORTS = [...document.querySelectorAll('#loc-list option')].map(o => o.value);
+        const PRICING = { fun: { prem: 0, leather: 0, delivery: 99, deposit: 1000 }, youth: { prem: 59, leather: 79, delivery: 0, deposit: 1500 }, termDisc: { 12: 0, 24: 0.05, 36: 0.10 } };
+        const AIRPORTS = [...document.querySelectorAll('#search-loc option')].map(o => o.value).filter(Boolean);
         const BK_STEPS = [['Your car', 'Twoje auto'], ['When & where', 'Kiedy i gdzie'], ['Your details', 'Twoje dane'], ['Sign', 'Podpis'], ['Pay', 'Płatność']];
         const rentals = [];
         let bk = null;
@@ -5546,10 +5641,18 @@
                    d: { first: '', last: '', email: '', phone: '', dob: '', lic: '', licYear: '' }, signed: false, agree: false, pay: 'blik', blik: '', card: { num: '', exp: '', cvc: '', name: '' }, step: 1, max: 1, ref: null };
             showPage('booking'); renderBooking();
         }
+        // Earliest dates: Fun Cars need 2 days to prepare (3 with home delivery); subscriptions start on a Monday at least a week out.
+        function bkMinStart() { return bk.kind === 'fun' ? daysFromNow(bk.delivery === 'home' ? 3 : 2) : (() => { let d = daysFromNow(7); while (d.getDay() !== 1) d = new Date(d.getTime() + 864e5); return d; })(); }
         function bkStartOptions() {
-            if (bk.kind === 'fun') return [...Array(10)].map((_, i) => daysFromNow(i + 1));
-            const out = []; for (let i = 1; out.length < 4; i++) { const d = daysFromNow(i); if (d.getDay() === 1) out.push(d); } return out;
+            const min = bkMinStart();
+            if (bk.kind === 'fun') return [...Array(8)].map((_, i) => new Date(min.getTime() + i * 864e5));
+            return [...Array(4)].map((_, i) => new Date(min.getTime() + i * 7 * 864e5));
         }
+        function bkPickOther(btn) {
+            openCalendar(btn, { value: bk.start ? new Date(bk.start) : null, min: bkMinStart(), max: daysFromNow(180), allow: bk.kind === 'youth' ? d => d.getDay() === 1 : null,
+                onPick: d => { d.setHours(12, 0, 0, 0); bk.start = d.toDateString(); renderBooking(); } });
+        }
+        function bkSetDelivery(v) { bk.delivery = v; if (bk.start && new Date(bk.start) < new Date(bkMinStart().toDateString())) bk.start = null; renderBooking(); }
         function bkPrice() {
             const P = PRICING[bk.kind], col = bk.colors[bk.color], leather = bk.interior !== 'fabric';
             const unit = bk.car.price + (col.prem ? P.prem : 0) + (leather ? P.leather : 0);
@@ -5577,7 +5680,7 @@
                 <div class="card-pad">
                     <p class="xs dim">${bk.kind === 'fun' ? t('Weekend Fun Car', 'Weekendowy Fun-Car') : t('Long-term subscription', 'Subskrypcja długoterminowa')}</p>
                     <h2 class="h3" style="font-size:22px">${bk.car.n}</h2>
-                    <div class="row mt-12" style="gap:10px"><span class="dot" style="width:18px;height:18px;border-radius:50%;background:${col.hex};box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)"></span><span class="small">${t(col.en, col.pl)}</span><span class="dim small">·</span><span class="small">${t(int[1], int[2])}</span></div>
+                    <div class="row mt-12" style="gap:10px"><span class="dot" style="width:18px;height:18px;border-radius:50%;background:${col.hex};box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)"></span><span class="small">${t(col.en, col.pl)}</span>${bk.kind === 'youth' ? `<span class="dim small">·</span><span class="small">${t(int[1], int[2])}</span>` : ''}</div>
                     <p class="small muted mt-8"><i class="fa-regular fa-calendar" aria-hidden="true"></i>&nbsp; ${bkPeriod()}</p>
                     <p class="small muted mt-4"><i class="fa-solid fa-location-dot" aria-hidden="true"></i>&nbsp; ${bk.delivery === 'home' ? (esc(bk.address) || t('Delivery address', 'Adres dostawy')) : bk.airport}</p>
                     <hr class="divider" style="margin:16px 0">
@@ -5593,25 +5696,28 @@
             document.getElementById('bk-steps').innerHTML = BK_STEPS.map((st, i) => { const n = i + 1, cls = s === 6 || n < s ? 'done' : n === s ? 'current' : ''; return `<li><button type="button" class="${cls}" ${n <= bk.max && s !== 6 ? '' : 'disabled'} onclick="bkGo(${n})"><span class="n">${cls === 'done' ? '<i class="fa-solid fa-check" aria-hidden="true"></i>' : n}</span><span class="t">${t(st[0], st[1])}</span></button></li>`; }).join('');
             const body = document.getElementById('bk-body'), p = bkPrice();
             if (s === 1) {
-                const col = bk.colors[bk.color];
-                body.innerHTML = `<p class="wz-q">${t('Make it yours', 'Skonfiguruj')}</p><p class="wz-sub">${t('Pick the colour and interior you want. The photo shows', 'Wybierz kolor i wnętrze. Na zdjęciu:')} ${t(bk.colors[0].en, bk.colors[0].pl)}.</p>
-                    <p class="label">${t('Exterior colour', 'Kolor nadwozia')} · <span class="muted" style="font-weight:500">${t(col.en, col.pl)}${col.prem ? ` · +${PRICING[bk.kind].prem} PLN/${perUnit()}` : ` · ${t('included', 'w cenie')}`}</span></p>
-                    <div class="swatches" role="radiogroup" aria-label="${t('Exterior colour', 'Kolor nadwozia')}">${bk.colors.map((c, i) => `<button type="button" class="swatch ${i === bk.color ? 'on' : ''}" role="radio" aria-checked="${i === bk.color}" aria-label="${t(c.en, c.pl)}" title="${t(c.en, c.pl)}" style="background-color:${c.hex}" onclick="bk.color=${i}; renderBooking()">${c.prem ? '<span class="star" aria-hidden="true">★</span>' : ''}</button>`).join('')}</div>
-                    <p class="xs dim mt-8">★ ${t('Premium colour', 'Kolor premium')}</p>
+                const col = bk.colors[bk.color], fun = bk.kind === 'fun';
+                body.innerHTML = `<p class="wz-q">${t('Make it yours', 'Skonfiguruj')}</p><p class="wz-sub">${fun ? t('Pick your colour — every colour is the same price.', 'Wybierz kolor — każdy w tej samej cenie.') : t('Pick the colour and interior you want.', 'Wybierz kolor i wnętrze.')} ${t('The photo shows', 'Na zdjęciu:')} ${t(bk.colors[0].en, bk.colors[0].pl)}.</p>
+                    <p class="label">${t('Exterior colour', 'Kolor nadwozia')} · <span class="muted" style="font-weight:500">${t(col.en, col.pl)}${!fun ? (col.prem ? ` · +${PRICING.youth.prem} PLN/${perUnit()}` : ` · ${t('included', 'w cenie')}`) : ''}</span></p>
+                    <div class="swatches" role="radiogroup" aria-label="${t('Exterior colour', 'Kolor nadwozia')}">${bk.colors.map((c, i) => `<button type="button" class="swatch ${i === bk.color ? 'on' : ''}" role="radio" aria-checked="${i === bk.color}" aria-label="${t(c.en, c.pl)}" title="${t(c.en, c.pl)}" style="background-color:${c.hex}" onclick="bk.color=${i}; renderBooking()">${!fun && c.prem ? '<span class="star" aria-hidden="true">★</span>' : ''}</button>`).join('')}</div>
+                    ${fun
+                        ? `<div class="review-box mt-24 row between row-wrap"><span class="muted">${t(`Your rental · ${bk.days} days`, `Twój wynajem · ${bk.days} dni`)}</span><span class="num" style="font-size:22px">${fmt(p.rent)} PLN</span></div><p class="xs dim mt-8">${t('You can change the number of days in the next step.', 'Liczbę dni zmienisz w następnym kroku.')}</p>`
+                        : `<p class="xs dim mt-8">★ ${t('Premium colour', 'Kolor premium')}</p>
                     <p class="label mt-24">${t('Interior', 'Wnętrze')}</p>
-                    <div class="opt-grid four" role="radiogroup">${INTERIORS.map(i => `<button type="button" class="opt ${bk.interior === i[0] ? 'on' : ''}" role="radio" aria-checked="${bk.interior === i[0]}" onclick="bk.interior='${i[0]}'; renderBooking()"><span class="dot" style="background:${i[3]}"></span><b>${t(i[1], i[2])}</b><span>${i[4] ? `+${PRICING[bk.kind].leather} PLN/${perUnit()}` : t('Included', 'W cenie')}</span></button>`).join('')}</div>`;
+                    <div class="opt-grid four" role="radiogroup">${INTERIORS.map(i => `<button type="button" class="opt ${bk.interior === i[0] ? 'on' : ''}" role="radio" aria-checked="${bk.interior === i[0]}" onclick="bk.interior='${i[0]}'; renderBooking()"><span class="dot" style="background:${i[3]}"></span><b>${t(i[1], i[2])}</b><span>${i[4] ? `+${PRICING.youth.leather} PLN/${perUnit()}` : t('Included', 'W cenie')}</span></button>`).join('')}</div>`}`;
             } else if (s === 2) {
                 const opts = bkStartOptions();
-                body.innerHTML = `<p class="wz-q">${t('When and where?', 'Kiedy i gdzie?')}</p><p class="wz-sub">${bk.kind === 'fun' ? t('Pick your first day and how long you want it.', 'Wybierz pierwszy dzień i na jak długo.') : t('Subscriptions start on a Monday.', 'Subskrypcja startuje w poniedziałek.')}</p>
+                body.innerHTML = `<p class="wz-q">${t('When and where?', 'Kiedy i gdzie?')}</p><p class="wz-sub">${bk.kind === 'fun' ? t('Pick your first day and how long you want it.', 'Wybierz pierwszy dzień i na jak długo.') : t('Pick your start date and contract length.', 'Wybierz datę startu i długość umowy.')}</p>
                     <p class="label">${bk.kind === 'fun' ? t('Pick-up day', 'Dzień odbioru') : t('Start date', 'Data startu')}</p>
-                    <div class="slot-grid">${opts.map(d => { const k = d.toDateString(); return `<button type="button" class="slot ${bk.start === k ? 'on' : ''}" aria-pressed="${bk.start === k}" onclick="bk.start='${k}'; renderBooking()">${fmtDate(d, { weekday: 'short', day: 'numeric', month: 'short' })}${bk.kind === 'fun' && d.getDay() === 5 ? `<small>${t('Weekend', 'Weekend')}</small>` : ''}</button>`; }).join('')}</div>
+                    <div class="slot-grid cal-anchor">${opts.map(d => { const k = d.toDateString(); return `<button type="button" class="slot ${bk.start === k ? 'on' : ''}" aria-pressed="${bk.start === k}" onclick="bk.start='${k}'; renderBooking()">${fmtDate(d, { weekday: 'short', day: 'numeric', month: 'short' })}${bk.kind === 'fun' && d.getDay() === 5 ? `<small>${t('Weekend', 'Weekend')}</small>` : ''}</button>`; }).join('')}${(() => { const custom = bk.start && !opts.some(d => d.toDateString() === bk.start); return `<button type="button" class="slot ${custom ? 'on' : ''}" aria-haspopup="dialog" onclick="bkPickOther(this)"><i class="fa-regular fa-calendar" aria-hidden="true"></i>&nbsp; ${custom ? fmtDate(new Date(bk.start), { weekday: 'short', day: 'numeric', month: 'short' }) : t('Other date', 'Inna data')}</button>`; })()}</div>
+                    <p class="xs dim mt-8">${bk.kind === 'fun' ? t(`Earliest pick-up: ${fmtDate(bkMinStart(), { weekday: 'long', day: 'numeric', month: 'long' })} — we prepare and check every car first.`, `Najwcześniejszy odbiór: ${fmtDate(bkMinStart(), { weekday: 'long', day: 'numeric', month: 'long' })} — każde auto najpierw przygotowujemy.`) : t('Subscriptions start on a Monday, at least a week from today.', 'Subskrypcja startuje w poniedziałek, najwcześniej za tydzień.')}</p>
                     ${bk.kind === 'fun'
                         ? `<p class="label mt-24">${t('How many days?', 'Ile dni?')}</p><div class="stepper"><button type="button" aria-label="−" onclick="bk.days=Math.max(1,bk.days-1); renderBooking()">−</button><output>${bk.days} ${bk.days === 1 ? t('day', 'dzień') : t('days', 'dni')}</output><button type="button" aria-label="+" onclick="bk.days=Math.min(14,bk.days+1); renderBooking()">+</button></div>`
                         : `<p class="label mt-24">${t('Contract length', 'Długość umowy')}</p><div class="opt-grid" style="grid-template-columns:repeat(3,minmax(0,1fr))">${[12, 24, 36].map(m => `<button type="button" class="opt ${bk.term === m ? 'on' : ''}" aria-pressed="${bk.term === m}" onclick="bk.term=${m}; renderBooking()"><b>${m} ${t('months', 'mies.')}</b><span>${PRICING.termDisc[m] ? `−${PRICING.termDisc[m] * 100}%` : t('Standard price', 'Cena standardowa')}</span></button>`).join('')}</div>`}
                     <p class="label mt-24">${t('How do you get the car?', 'Jak odbierasz auto?')}</p>
                     <div class="opt-grid">
-                        <button type="button" class="opt ${bk.delivery === 'pickup' ? 'on' : ''}" onclick="bk.delivery='pickup'; renderBooking()"><i class="fa-solid fa-plane-departure brand" aria-hidden="true"></i><b>${t('Pick up at an airport', 'Odbiór na lotnisku')}</b><span>${t('Free', 'Gratis')}</span></button>
-                        <button type="button" class="opt ${bk.delivery === 'home' ? 'on' : ''}" onclick="bk.delivery='home'; renderBooking()"><i class="fa-solid fa-truck brand" aria-hidden="true"></i><b>${t('Deliver to my door', 'Dostawa pod drzwi')}</b><span>${PRICING[bk.kind].delivery ? `${PRICING[bk.kind].delivery} PLN` : t('Free with a subscription', 'Gratis w subskrypcji')}</span></button>
+                        <button type="button" class="opt ${bk.delivery === 'pickup' ? 'on' : ''}" onclick="bkSetDelivery('pickup')"><i class="fa-solid fa-plane-departure brand" aria-hidden="true"></i><b>${t('Pick up at an airport', 'Odbiór na lotnisku')}</b><span>${t('Free', 'Gratis')}</span></button>
+                        <button type="button" class="opt ${bk.delivery === 'home' ? 'on' : ''}" onclick="bkSetDelivery('home')"><i class="fa-solid fa-truck brand" aria-hidden="true"></i><b>${t('Deliver to my door', 'Dostawa pod drzwi')}</b><span>${PRICING[bk.kind].delivery ? `${PRICING[bk.kind].delivery} PLN` : t('Free with a subscription', 'Gratis w subskrypcji')}</span></button>
                     </div>
                     ${bk.delivery === 'pickup'
                         ? `<div class="chips mt-16">${AIRPORTS.map(a => `<button type="button" class="chip ${bk.airport === a ? 'on' : ''}" aria-pressed="${bk.airport === a}" onclick="bk.airport='${a}'; renderBooking()">${a}</button>`).join('')}</div>`
@@ -5630,7 +5736,7 @@
                 const km = bk.kind === 'fun' ? t('300 km per day included', '300 km dziennie w cenie') : t('1,250 km per month included', '1 250 km miesięcznie w cenie');
                 body.innerHTML = `<p class="wz-q">${t('Sign your agreement', 'Podpisz umowę')}</p><p class="wz-sub">${t('The key terms, in plain language.', 'Najważniejsze warunki, prostym językiem.')}</p>
                     <div class="terms">
-                        <h4>${t('Your car', 'Twoje auto')}</h4><p>${bk.car.n} · ${t(bk.colors[bk.color].en, bk.colors[bk.color].pl)} · ${t(INTERIORS.find(i => i[0] === bk.interior)[1], INTERIORS.find(i => i[0] === bk.interior)[2])}</p>
+                        <h4>${t('Your car', 'Twoje auto')}</h4><p>${bk.car.n} · ${t(bk.colors[bk.color].en, bk.colors[bk.color].pl)}${bk.kind === 'youth' ? ' · ' + t(INTERIORS.find(i => i[0] === bk.interior)[1], INTERIORS.find(i => i[0] === bk.interior)[2]) : ''}</p>
                         <h4>${t('Period & price', 'Okres i cena')}</h4><p>${bkPeriod()} · ${bk.kind === 'fun' ? `${fmt(p.total)} PLN` : `${fmt(p.monthly)} PLN/${t('month', 'mies.')}`}</p>
                         <h4>${t('Kilometres', 'Kilometry')}</h4><p>${km}; ${t('extra km 0.45 PLN each', 'każdy dodatkowy km 0,45 PLN')}.</p>
                         <h4>${t('Insurance', 'Ubezpieczenie')}</h4><p>${t('OC + AC included.', 'OC + AC w cenie.')} ${linked.has('bank') ? t('Excess 0 PLN (Neobank CDW).', 'Udział własny 0 PLN (CDW Neobank).') : t('Excess 1,500 PLN.', 'Udział własny 1 500 PLN.')}</p>
@@ -5908,6 +6014,7 @@
         }
         function wzValid(step) {
             if (step === 1 && panelViewer.pins === 0) return t('Tap the car to mark at least one damaged spot.', 'Stuknij auto, aby zaznaczyć co najmniej jedno miejsce.');
+            if (step === 3 && dmgWhen() > new Date()) return t("The date and time can't be in the future.", 'Data i godzina nie mogą być w przyszłości.');
             if (step === 3 && !document.getElementById('damage-desc').value.trim()) return t('Add a short description of the damage.', 'Dodaj krótki opis szkody.');
             return '';
         }
@@ -5939,10 +6046,10 @@
             if (wzStep === 4) renderReview();
         }
         function reportRows() {
-            const sel = document.getElementById('car-selector'), r = curRental(), sev = SEVERITY.find(s => s[0] === dmg.severity), whenSel = document.getElementById('dmg-when');
+            const sel = document.getElementById('car-selector'), r = curRental(), sev = SEVERITY.find(s => s[0] === dmg.severity);
             return [[t('Vehicle', 'Pojazd'), `${r.model} · ${r.plate}`], [t('Body type', 'Nadwozie'), activeBodyType('btn')], [t('Damage pins', 'Pinezki'), panelViewer.pins], [t('Photos', 'Zdjęcia'), damagePhotos.length],
                 [t('Type', 'Rodzaj'), DMG_TYPES.filter(d => dmg.types.has(d[0])).map(d => t(d[1], d[2])).join(', ') || '—'], [t('Severity', 'Rozmiar'), t(sev[1], sev[2])],
-                [t('When', 'Kiedy'), whenSel.options[whenSel.selectedIndex].text], [t('Where', 'Gdzie'), esc(document.getElementById('dmg-where').value.trim()) || '—']];
+                [t('When', 'Kiedy'), dmgWhen().toLocaleString(locale(), { dateStyle: 'medium', timeStyle: 'short' })], [t('Where', 'Gdzie'), esc(document.getElementById('dmg-where').value.trim()) || '—']];
         }
         function renderReview() {
             document.getElementById('review-kv').innerHTML = reportRows().map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
@@ -5975,6 +6082,13 @@
             dz.addEventListener('drop', e => addPhotos(e.dataTransfer.files));
         })();
 
+        let dmgDate = new Date();
+        function renderDmgWhen() { setTxt('dmg-date-val', sameDay(dmgDate, new Date()) ? t('Today', 'Dziś') + ', ' + fmtDate(dmgDate, { day: 'numeric', month: 'short' }) : fmtDate(dmgDate, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })); }
+        function resetDmgWhen() {
+            dmgDate = new Date(); const n = new Date(), q = Math.floor((n.getHours() * 60 + n.getMinutes()) / 15);
+            const s = document.getElementById('dmg-time'); s.selectedIndex = q; s.dispatchEvent(new Event('change')); renderDmgWhen();
+        }
+        function dmgWhen() { const [h, mi] = document.getElementById('dmg-time').value.split(':').map(Number); const d = new Date(dmgDate); d.setHours(h, mi, 0, 0); return d; }
         function whenToDate(v) {
             const d = new Date();
             if (v === 'today') d.setHours(d.getHours() - 3); else if (v === 'yesterday') d.setDate(d.getDate() - 1); else if (v === 'week') d.setDate(d.getDate() - 3); else if (v === 'older') return null;
@@ -5988,7 +6102,7 @@
             set('claim-mileage', lastOdometer ? fmt(lastOdometer) + ' km' : '');
             const types = DMG_TYPES.filter(d => dmg.types.has(d[0])).map(d => t(d[1], d[2])).join(', ');
             set('claim-parts', [types, desc].filter(Boolean).join(' — '));
-            set('claim-when', whenToDate(document.getElementById('dmg-when').value));
+            { const d = dmgWhen(), p2 = n => String(n).padStart(2, '0'); set('claim-when', `${p2(d.getDate())}.${p2(d.getMonth() + 1)}.${d.getFullYear()} ${p2(d.getHours())}:${p2(d.getMinutes())}`); }
             set('claim-where', document.getElementById('dmg-where').value.trim());
         }
         function openFullReport() { prefillClaim(); showPage('full-report'); }
@@ -6004,7 +6118,7 @@
         }
         function resetDamageForm() {
             document.getElementById('damage-desc').value = ''; document.getElementById('dmg-where').value = '';
-            const w = document.getElementById('dmg-when'); w.selectedIndex = 0; w.dispatchEvent(new Event('change'));
+            resetDmgWhen();
             damagePhotos.forEach(p => URL.revokeObjectURL(p.url)); damagePhotos = []; dmg.types.clear(); dmg.severity = 'minor';
             draftRef = newRef(); panelViewer.reset(); renderPhotos(); renderDamageForm();
             wzMax = 1; wzGo(1);
@@ -6186,12 +6300,12 @@
             if (has(m, /pet|dog|cat|pies|psa|kot/)) return { text: t('Pets are welcome — use a carrier or seat cover. If the car needs extra cleaning, it\'s 250 PLN.', 'Zwierzęta mile widziane — w transporterze lub z pokrowcem. Jeśli auto wymaga dodatkowego sprzątania: 250 PLN.') };
             if (has(m, /smok|vape|pal[iić]|papieros|e-?papieros/)) return { text: t('No smoking or vaping in the car — there\'s a 500 PLN cleaning fee if we find signs of it.', 'W aucie nie wolno palić ani vape\'ować — opłata za czyszczenie to 500 PLN.') };
             if (has(m, /fuel|petrol|diesel|charge|charging|paliw|tank|ładow|ladow|benzyn/)) return { text: t(`The ${r.model} runs on ${r.fuel[0]}. Fuel isn't included — just return it with the same level you got it.`, `${r.model} jeździ na: ${r.fuel[1]}. Paliwo nie jest w cenie — oddaj z takim poziomem, jak przy odbiorze.`) };
-            if (has(m, /upgrade|swap|change (my )?car|different car|bigger car|zamian|zmieni.*auto|inne auto|wymie.*auto/)) return { text: t(`You can switch to another car after 12 months (you're at ${Math.floor(r.used / 30.44)}). The fee changes to the new car's rate; your contract end date stays. Plus members also get two free weekend upgrades a year.`, `Auto można zmienić po 12 mies. (jesteś na ${Math.floor(r.used / 30.44)}). Opłata zmienia się na stawkę nowego auta, data końca zostaje. Status Plus daje też 2 darmowe upgrade'y weekendowe w roku.`) };
+            if (has(m, /upgrade|swap|change (my )?car|different car|bigger car|zamian|zmieni.*auto|inne auto|wymie.*auto/)) return { text: t(`You can switch to another car after 12 months (you're at ${Math.floor(r.used / 30.44)}). The fee changes to the new car's rate; your contract end date stays. Plus members also get one free weekend upgrade a year.`, `Auto można zmienić po 12 mies. (jesteś na ${Math.floor(r.used / 30.44)}). Opłata zmienia się na stawkę nowego auta, data końca zostaje. Status Plus daje też 1 darmowy upgrade weekendowy w roku.`) };
             if (has(m, /where.*return|return location|drop.?off|gdzie.*odda|zwrot.*gdzie/)) return { text: t('Return it at any VOLTA location or at the airports in Gdańsk, Katowice, Kraków, Łódź, Warsaw or Wrocław.', 'Oddasz auto w dowolnym punkcie VOLTA lub na lotniskach: Gdańsk, Katowice, Kraków, Łódź, Warszawa, Wrocław.') };
             if (has(m, /document|contract pdf|agreement|invoice copy|dokument|umow[aęy] pdf|polis[aęy]/)) return { text: t('Your rental agreement, insurance certificate, registration and invoices are in Overview → Documents.', 'Umowa, polisa, dowód rejestracyjny i faktury są w Przegląd → Dokumenty.'), action: [t('Open Documents', 'Otwórz Dokumenty'), () => setTab('overview')] };
 
             // Rewards
-            if (has(m, /refer|recommend|polec|zaprosi|invite/)) return { text: t(`When a friend you refer signs a contract, you get ${fmt(2000)} points — that's most of a free Fun Car day. There's no limit on referrals.`, `Gdy polecony znajomy podpisze umowę, dostajesz ${fmt(2000)} pkt — prawie cały darmowy dzień Fun-Carem. Bez limitu poleceń.`) };
+            if (has(m, /refer|recommend|polec|zaprosi|invite/)) return { text: t(`When a friend you refer signs a contract, you get ${fmt(2000)} points — that's two-thirds of 300 PLN off your next invoice. There's no limit on referrals.`, `Gdy polecony znajomy podpisze umowę, dostajesz ${fmt(2000)} pkt — to 2/3 rabatu 300 PLN na fakturę. Bez limitu poleceń.`) };
             if (has(m, /earn|get (more )?points|collect|how.*points|zdoby|zbiera|jak.*punkt|więcej punkt|wiecej punkt/)) return { text: t('You earn points for things we can verify — no self-reporting:', 'Punkty dostajesz za rzeczy, które możemy sprawdzić — bez samodzielnego raportowania:'), list: EARN.map(e => `+${fmt(e[1])} — ${t(e[2], e[3])}`), after: t(`Your status follows total points earned (${fmt(lifetime)} so far) — spending never lowers it.`, `Status zależy od wszystkich zdobytych punktów (na razie ${fmt(lifetime)}) — wydawanie go nie obniża.`) };
             if (has(m, /point|punkt|reward|nagrod|redeem|voucher|odebra|elite|tier|status/)) {
                 const can = REDEEM.filter(x => points >= x.cost).map(x => `${tx([x.en, x.pl])[0]} — ${fmt(x.cost)} ${t('pts', 'pkt')}`);
@@ -6231,7 +6345,9 @@
         }
 
         // ============ INIT ============
+        (function buildTimes() { const s = document.getElementById('dmg-time'); for (let m = 0; m < 1440; m += 15) { const o = document.createElement('option'); o.value = o.textContent = String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); s.appendChild(o); } })();
         document.querySelectorAll('select[data-dd]').forEach(enhanceSelect);
+        resetDmgWhen();
         setLang('en');
         routeFromHash();
         updateNav();
