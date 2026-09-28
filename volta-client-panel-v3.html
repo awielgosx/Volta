@@ -4276,7 +4276,11 @@
 
         /* ---------- Round 3 ---------- */
         /* Hero keeps the full-height photo and original gradient; the content block sits lower so it doesn't float. */
-        .hero { justify-content: flex-end; padding-bottom: max(56px, 11svh); }
+        .hero { justify-content: flex-end; padding-bottom: max(56px, 17.5svh); }
+        /* Same shading as the original brief: only the 30%→90% gradient over the photo, nothing layered on top. */
+        .hero::after { display: none; }
+        .nav.on-hero { background: transparent; }
+        .nav.on-hero .nav-link, .nav.on-hero .logo { text-shadow: 0 1px 8px rgba(0,0,0,.45); }
         /* Bar turns solid black once the hero search has scrolled under it. */
         .nav { background: rgba(0,0,0,.94); }
         /* "Everything others make you call about": time bars replace the decorative icons. */
