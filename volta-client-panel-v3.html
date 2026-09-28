@@ -4231,42 +4231,8 @@
         .row { display: flex; align-items: center; gap: 12px; } .row-wrap { flex-wrap: wrap; } .between { justify-content: space-between; } .grow { flex-grow: 1; min-width: 0; }
         .mt-4 { margin-top: 4px; } .mt-8 { margin-top: 8px; } .mt-12 { margin-top: 12px; } .mt-16 { margin-top: 16px; } .mt-24 { margin-top: 24px; } .mt-32 { margin-top: 32px; } .mb-8 { margin-bottom: 8px; } .mb-16 { margin-bottom: 16px; } .mb-24 { margin-bottom: 24px; }
         @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
-
-        /* ---------- Round 2: quieter, less templated ---------- */
-        .hero { min-height: calc(100svh - 110px); padding-bottom: 40px; }
-        .hero .h1 { letter-spacing: -0.035em; }
-        h1 .brand, h2 .brand { color: inherit; }
-        .hero .h1 .brand { color: #ff7a1a; }
-        .eyebrow { font-size: 15px; font-weight: 400; color: var(--text-2); }
         .head-action { text-align: left; }
         @media (min-width: 900px) { .head-action { justify-self: end; text-align: right; } }
-
-        .plain-points { margin-top: 32px; display: grid; gap: 24px; max-width: 460px; }
-        .plain-points > div { padding-top: 20px; border-top: .5px solid var(--line-2); }
-        .plain-points h3 { font-family: var(--f-display); font-weight: 600; font-size: 19px; margin: 0 0 4px; letter-spacing: -0.02em; }
-        .plain-points p { color: var(--text-2); font-size: 17px; }
-
-        .compare { margin-top: 40px; border-top: .5px solid var(--line-2); }
-        .compare-row { display: grid; gap: 4px 32px; padding: 22px 0; border-bottom: .5px solid var(--line-2); align-items: baseline; }
-        .compare-row b { font-family: var(--f-display); font-weight: 600; font-size: 19px; letter-spacing: -0.02em; }
-        .compare-row .was { color: var(--text-3); font-size: 15px; }
-        .compare-row > span { font-size: 17px; }
-        .compare-row .link { font-size: 17px; white-space: nowrap; }
-        .compare-row .link i { font-size: 12px; }
-        .compare-head { display: none; }
-        @media (max-width: 899px) { .compare-row .was::before { content: 'Elsewhere: '; } html[lang=pl] .compare-row .was::before { content: 'Gdzie indziej: '; } .compare-row > span:last-child { margin-top: 6px; } .compare-row b { margin-bottom: 4px; } }
-        @media (min-width: 900px) {
-            .compare-row { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1.5fr) auto; }
-            .compare-head { display: grid; padding: 0 0 12px; }
-            .compare-head span { font-size: 13px; font-weight: 600; color: var(--text-2); }
-            .compare { border-top: 0; }
-            .compare-row.compare-head { border-bottom: .5px solid var(--line-2); }
-            .compare-row > span:last-child { justify-self: end; }
-        }
-
-        .quick i { background: none; color: var(--brand-text); width: auto; height: auto; font-size: 20px; justify-content: flex-start; }
-        .ic-box { background: none !important; color: var(--brand-text); width: auto !important; height: auto !important; font-size: 20px; justify-content: flex-start; }
-
         .year { margin-top: 72px; padding: 40px; border-radius: 22px; background: var(--surface-2); }
         @media (max-width: 699px) { .year { padding: 24px 20px; margin-top: 48px; } }
         .year-top { display: grid; gap: 32px; }
@@ -4285,16 +4251,6 @@
         .year-total { display: flex; flex-direction: column; }
         .year-total .num { font-family: var(--f-display); font-weight: 700; font-size: clamp(3.5rem, 8vw, 5.5rem); line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
         .year-total p { font-size: 17px; line-height: 1.5; }
-        .scale { position: relative; margin: 48px 0 0; height: 84px; }
-        .scale-track { position: absolute; left: 0; right: 0; top: 7px; height: 6px; border-radius: 3px; background: rgba(255,236,214,.16); overflow: hidden; }
-        .scale-track span { display: block; height: 100%; background: var(--brand); border-radius: 3px; transition: width .35s var(--ease); }
-        .scale-stop { position: absolute; top: 0; transform: translateX(-100%); text-align: right; display: flex; flex-direction: column; align-items: flex-end; width: 24%; }
-        .scale-stop i { width: 20px; height: 20px; border-radius: 50%; background: var(--surface); box-shadow: inset 0 0 0 2px rgba(255,236,214,.16); margin-bottom: 10px; }
-        .scale-stop.on i { background: var(--brand); box-shadow: inset 0 0 0 4px var(--surface); }
-        .scale-stop b { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
-        .scale-stop span { font-size: 13px; color: var(--text-2); line-height: 1.3; }
-        .scale-stop.on span { color: var(--text); }
-
         .status-sec { margin-top: 96px; }
         .status-cols { display: grid; gap: 28px; margin-top: 32px; }
         @media (min-width: 900px) { .status-cols { grid-template-columns: repeat(3, 1fr); gap: 40px; } }
@@ -4303,7 +4259,6 @@
         .status-cols h3 { font-family: var(--f-display); font-weight: 600; font-size: 24px; letter-spacing: -0.02em; margin: 0; display: flex; align-items: center; gap: 10px; }
         .status-cols p:last-child { margin-top: 10px; font-size: 17px; }
         .you-tag { font-size: 13px; font-weight: 600; color: var(--brand-text); letter-spacing: 0; }
-
         .poster-rail { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(240px, 1fr); gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; scrollbar-width: none; }
         .poster-rail::-webkit-scrollbar { display: none; }
         @media (max-width: 699px) { .poster-rail { grid-auto-columns: 78%; margin: 0 -16px; padding: 0 16px 8px; scroll-padding: 0 16px; } }
@@ -4314,20 +4269,42 @@
         .poster h3 { font-family: var(--f-display); font-weight: 600; font-size: 21px; letter-spacing: -0.02em; margin: 0 0 6px; }
         .poster .perk-line { font-size: 15px; line-height: 1.35; }
         .poster .how { font-size: 13px; color: rgba(255,255,255,.72); margin-top: 6px; }
-
         .closing { margin-top: 96px; padding-top: 32px; border-top: .5px solid var(--line-2); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
         .closing p { font-size: 21px; font-family: var(--f-display); font-weight: 600; letter-spacing: -0.02em; }
         .year { background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); }
-        @media (max-width: 699px) { .scale { height: 124px; } .scale-stop b, .scale-stop span { font-size: 12px; } }
-        @media (min-width: 900px) { .compare-row { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1.5fr) 128px; } }
         @media (min-width: 1000px) { .poster-rail { grid-auto-flow: row; grid-template-columns: repeat(5, minmax(0, 1fr)); overflow: visible; } .poster { aspect-ratio: 2 / 3; } .poster-text { padding: 16px; } .poster h3 { font-size: 19px; } .poster .perk-line { font-size: 14px; } }
-        .eyebrow::before { display: none; }
-        .compare-row .link { border-bottom: 0; padding-bottom: 0; color: var(--brand-text); font-weight: 500; }
-        .compare-row .link:hover { color: var(--brand-h); }
-        .scale-stop.on i { box-shadow: inset 0 0 0 4px var(--surface); }
-        .quick i { background: none; color: var(--brand-text); width: auto; height: auto; font-size: 20px; justify-content: flex-start; }
-        .ic-box { background: none !important; color: var(--brand-text); width: auto !important; height: auto !important; font-size: 20px; justify-content: flex-start; }
-        .photo-frame::before { display: none; }
+
+        /* ---------- Round 3 ---------- */
+        /* Hero keeps the full-height photo and original gradient; the content block sits lower so it doesn't float. */
+        .hero { justify-content: flex-end; padding-bottom: max(56px, 11svh); }
+        /* Bar turns solid black once the hero search has scrolled under it. */
+        .nav { background: rgba(0,0,0,.94); }
+        /* "Everything others make you call about": time bars replace the decorative icons. */
+        .why-bars { display: grid; gap: 7px; width: 100%; margin-bottom: 12px; }
+        .why-bars > div { display: grid; grid-template-columns: 56px minmax(0, 1fr) 58px; align-items: center; gap: 10px; font-size: 12px; color: var(--text-3); }
+        .why-bars i { display: block; height: 6px; border-radius: 3px; background: rgba(255,236,214,.08); overflow: hidden; }
+        .why-bars s { display: block; height: 100%; min-width: 6px; border-radius: 3px; background: rgba(255,236,214,.28); }
+        .why-bars .v { color: var(--text); font-weight: 600; }
+        .why-bars .v s { background: var(--brand); }
+        @media (max-width: 600px) { .tl-end:not(.tl-start) { display: none; } }
+        .why-bars em { font-style: normal; font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; white-space: nowrap; }
+        .why .vs { text-decoration: none; }
+        /* Loyalty calculator */
+        .mini-link { font-size: 13px; font-weight: 600; color: var(--brand-text); }
+        .yr-worth { margin-top: 18px; display: grid; gap: 4px; font-size: 17px; }
+        .yr-worth b { color: var(--brand-text); }
+        .timeline { position: relative; margin: 40px 0 0; height: 70px; }
+        .tl-track { position: absolute; left: 0; right: 0; top: 30px; height: 6px; border-radius: 3px; background: linear-gradient(90deg, rgba(255,95,0,.3), var(--brand)); }
+        .tl-tick { position: absolute; top: 26px; height: 14px; border-left: 1px solid rgba(255,236,214,.45); }
+        .tl-tick span, .tl-end { position: absolute; top: 20px; font-size: 12px; color: var(--text-3); white-space: nowrap; }
+        .tl-tick span { left: 6px; }
+        .tl-end { top: 46px; right: 0; } .tl-end.tl-start { left: 0; right: auto; }
+        .tl-mark { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; font-size: 13px; }
+        .tl-mark.l { transform: translateX(-7px); } .tl-mark.r { transform: translateX(calc(-100% + 7px)); }
+        .tl-mark b { font-weight: 700; } .tl-mark span { color: var(--text-2); margin-left: 4px; }
+        .tl-mark i { position: absolute; top: 26px; left: 50%; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 3px var(--brand), 0 0 14px rgba(255,95,0,.8); }
+        .tl-mark.l i { left: 7px; } .tl-mark.r i { left: calc(100% - 7px); }
+        .yr-note { margin-top: 10px; font-size: 15px; color: var(--text-2); max-width: 760px; }
     </style>
 </head>
 <body id="top">
@@ -4408,10 +4385,11 @@
         <section class="section sunlit">
             <div class="wrap split">
                 <div>
-                    <h2 class="display h2" data-en="Same price as everyone else. Even at 19." data-pl="Ta sama cena co dla wszystkich. Nawet w wieku 19 lat.">Same price as everyone else. Even at 19.</h2>
-                    <div class="plain-points">
-                        <div><h3 data-en="No young-driver fee" data-pl="Bez opłaty za młody wiek">No young-driver fee</h3><p data-en="Most rental companies charge extra until you turn 25. We don't." data-pl="Większość wypożyczalni dolicza opłatę, dopóki nie skończysz 25 lat. My nie.">Most rental companies charge extra until you turn 25. We don't.</p></div>
-                        <div><h3 data-en="Run it from your phone" data-pl="Wszystko z telefonu">Run it from your phone</h3><p data-en="Bookings, kilometres, tyres and damage reports all live in the Client Panel." data-pl="Rezerwacje, kilometry, opony i zgłoszenia szkód — wszystko w Panelu Klienta.">Bookings, kilometres, tyres and damage reports all live in the Client Panel.</p></div>
+                    <span class="eyebrow" data-en="Why VOLTA" data-pl="Dlaczego VOLTA">Why VOLTA</span>
+                    <h2 class="display h2" data-en="The rules are simple:<br><span class='brand'>You're in charge.</span>" data-pl="Zasady są proste:<br><span class='brand'>Ty rządzisz.</span>">The rules are simple:<br><span class="brand">You're in charge.</span></h2>
+                    <div class="points-list">
+                        <div class="point"><span class="ic"><i class="fa-solid fa-id-card" aria-hidden="true"></i></span><div><h3 data-en="No young-driver fees" data-pl="Brak opłat za wiek">No young-driver fees</h3><p data-en="Gen Z? Forget the young-driver surcharge. You start on equal terms." data-pl="Jesteś Gen Z? Zapomnij o dopłatach dla młodych kierowców. Startujesz na równych zasadach.">Gen Z? Forget the young-driver surcharge. You start on equal terms.</p></div></div>
+                        <div class="point"><span class="ic"><i class="fa-solid fa-bolt" aria-hidden="true"></i></span><div><h3 data-en="Full independence" data-pl="Pełna niezależność">Full independence</h3><p data-en="Everything lives in the Client Panel — from booking to 3D damage reports. You decide, we deliver." data-pl="Wszystko w Panelu Klienta — od rezerwacji po zgłoszenie szkody 3D. Ty decydujesz, my dostarczamy.">Everything lives in the Client Panel — from booking to 3D damage reports. You decide, we deliver.</p></div></div>
                     </div>
                 </div>
                 <div class="photo-frame">
@@ -4422,37 +4400,44 @@
 
         <section class="section band sunlit" aria-labelledby="why-title">
             <div class="wrap">
-                <h2 id="why-title" class="display h2" style="max-width:760px" data-en="Everything others make you call about." data-pl="Wszystko, o co inni każą dzwonić.">Everything others make you call about.</h2>
-                <div class="compare" role="table" aria-labelledby="why-title">
-                    <div class="compare-row compare-head" role="row">
-                        <span role="columnheader"></span>
-                        <span role="columnheader" data-en="Elsewhere" data-pl="Gdzie indziej">Elsewhere</span>
-                        <span role="columnheader" data-en="With VOLTA" data-pl="Z VOLTA">With VOLTA</span>
-                        <span role="columnheader"></span>
+                <div class="section-head">
+                    <div>
+                        <span class="eyebrow" data-en="Renting, minus the hassle" data-pl="Wynajem bez stresu">Renting, minus the hassle</span>
+                        <h2 id="why-title" class="display h2" data-en="Everything others make you <span class='brand'>call about.</span>" data-pl="Wszystko, o co inni każą <span class='brand'>dzwonić.</span>">Everything others make you <span class="brand">call about.</span></h2>
                     </div>
-                    <div class="compare-row" role="row">
-                        <b role="rowheader" data-en="A scratch or a dent" data-pl="Rysa albo wgniecenie">A scratch or a dent</b>
-                        <span role="cell" class="was" data-en="Call the hotline, then email photos" data-pl="Telefon na infolinię, potem zdjęcia mailem">Call the hotline, then email photos</span>
-                        <span role="cell" data-en="Tap the spot on a 3D model of your car and add a photo. About a minute." data-pl="Stuknij miejsce na modelu 3D swojego auta i dodaj zdjęcie. Około minuty.">Tap the spot on a 3D model of your car and add a photo. About a minute.</span>
-                        <span role="cell"><button type="button" class="link" onclick="openPanel('damage')"><span data-en="Try it" data-pl="Wypróbuj">Try it</span><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button></span>
+                </div>
+                <div class="why-grid">
+                    <div class="why">
+                        <div class="why-bars" aria-hidden="true"><div class="v"><span>VOLTA</span><i><s style="width:4%"></s></i><em>60 s</em></div><div><span data-en="Usually" data-pl="Zwykle">Usually</span><i><s style="width:100%"></s></i><em data-en="25 min" data-pl="25 min">25 min</em></div></div>
+                        <h3 data-en="Damage reports in 3D" data-pl="Zgłoszenie szkody w 3D">Damage reports in 3D</h3>
+                        <p data-en="Tap the spot on a 3D car, add a photo. Done in about 60 seconds." data-pl="Stuknij miejsce na aucie 3D, dodaj zdjęcie. Gotowe w ok. 60 sekund.">Tap the spot on a 3D car, add a photo. Done in about 60 seconds.</p>
+                        <p class="vs" data-en="Usually: a phone call and emailed photos" data-pl="Zwykle: telefon i zdjęcia mailem">Usually: a phone call and emailed photos</p>
+                        <span class="spacer"></span>
+                        <button type="button" class="link" onclick="openPanel('damage')"><span data-en="Try it" data-pl="Wypróbuj">Try it</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
                     </div>
-                    <div class="compare-row" role="row">
-                        <b role="rowheader" data-en="The insurance claim" data-pl="Zgłoszenie do ubezpieczyciela">The insurance claim</b>
-                        <span role="cell" class="was" data-en="A 4-page PDF to print, sign and scan" data-pl="4 strony PDF do wydruku, podpisu i skanu">A 4-page PDF to print, sign and scan</span>
-                        <span role="cell" data-en="Filled in from your damage report. You check it and send." data-pl="Wypełnione na podstawie zgłoszenia szkody. Sprawdzasz i wysyłasz.">Filled in from your damage report. You check it and send.</span>
-                        <span role="cell"><button type="button" class="link" onclick="openFullReport()"><span data-en="See the form" data-pl="Zobacz formularz">See the form</span><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button></span>
+                    <div class="why">
+                        <div class="why-bars" aria-hidden="true"><div class="v"><span>VOLTA</span><i><s style="width:5%"></s></i><em>2 min</em></div><div><span data-en="Usually" data-pl="Zwykle">Usually</span><i><s style="width:100%"></s></i><em data-en="45 min" data-pl="45 min">45 min</em></div></div>
+                        <h3 data-en="Insurance claims, pre-filled" data-pl="Zgłoszenia do ubezpieczyciela — wypełnione">Insurance claims, pre-filled</h3>
+                        <p data-en="Your damage report fills in the insurer's claim form for you." data-pl="Twoje zgłoszenie szkody samo wypełnia formularz ubezpieczyciela.">Your damage report fills in the insurer's claim form for you.</p>
+                        <p class="vs" data-en="Usually: a 4-page PDF to print and sign" data-pl="Zwykle: 4 strony PDF do wydruku">Usually: a 4-page PDF to print and sign</p>
+                        <span class="spacer"></span>
+                        <button type="button" class="link" onclick="openFullReport()"><span data-en="See the form" data-pl="Zobacz formularz">See the form</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
                     </div>
-                    <div class="compare-row" role="row">
-                        <b role="rowheader" data-en="Tyres and service" data-pl="Opony i serwis">Tyres and service</b>
-                        <span role="cell" class="was" data-en="Call, wait for a callback, agree a date" data-pl="Telefon, czekanie na oddzwonienie, ustalanie terminu">Call, wait for a callback, agree a date</span>
-                        <span role="cell" data-en="Pick a partner workshop on the map and a free slot." data-pl="Wybierz warsztat partnerski na mapie i wolny termin.">Pick a partner workshop on the map and a free slot.</span>
-                        <span role="cell"><button type="button" class="link" onclick="openPanel('service')"><span data-en="Book a slot" data-pl="Zarezerwuj">Book a slot</span><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button></span>
+                    <div class="why">
+                        <div class="why-bars" aria-hidden="true"><div class="v"><span>VOLTA</span><i><s style="width:1%"></s></i><em>30 s</em></div><div><span data-en="Usually" data-pl="Zwykle">Usually</span><i><s style="width:100%"></s></i><em data-en="1–2 days" data-pl="1–2 dni">1–2 days</em></div></div>
+                        <h3 data-en="Tyres & service in two taps" data-pl="Opony i serwis w dwa kliknięcia">Tyres & service in two taps</h3>
+                        <p data-en="Pick a partner workshop on the map and a time that suits you." data-pl="Wybierz warsztat na mapie i dogodną godzinę.">Pick a partner workshop on the map and a time that suits you.</p>
+                        <p class="vs" data-en="Usually: calling the rental hotline" data-pl="Zwykle: dzwonienie na infolinię">Usually: calling the rental hotline</p>
+                        <span class="spacer"></span>
+                        <button type="button" class="link" onclick="openPanel('service')"><span data-en="Book a slot" data-pl="Zarezerwuj">Book a slot</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
                     </div>
-                    <div class="compare-row" role="row">
-                        <b role="rowheader" data-en="A question about your contract" data-pl="Pytanie o umowę">A question about your contract</b>
-                        <span role="cell" class="was" data-en="20 minutes on hold" data-pl="20 minut na linii">20 minutes on hold</span>
-                        <span role="cell" data-en="Ask the assistant. It knows your dates, limits and fees." data-pl="Zapytaj asystenta. Zna Twoje daty, limity i opłaty.">Ask the assistant. It knows your dates, limits and fees.</span>
-                        <span role="cell"><button type="button" class="link" onclick="openPanel('assistant')"><span data-en="Ask" data-pl="Zapytaj">Ask</span><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button></span>
+                    <div class="why">
+                        <div class="why-bars" aria-hidden="true"><div class="v"><span>VOLTA</span><i><s style="width:1%"></s></i><em>10 s</em></div><div><span data-en="Usually" data-pl="Zwykle">Usually</span><i><s style="width:100%"></s></i><em data-en="20 min" data-pl="20 min">20 min</em></div></div>
+                        <h3 data-en="No calls. No emails." data-pl="Bez telefonów. Bez maili.">No calls. No emails.</h3>
+                        <p data-en="A 24/7 assistant that actually knows your contract, dates and limits." data-pl="Asystent 24/7, który zna Twoją umowę, daty i limity.">A 24/7 assistant that actually knows your contract, dates and limits.</p>
+                        <p class="vs" data-en="Usually: 20 minutes on hold" data-pl="Zwykle: 20 minut na linii">Usually: 20 minutes on hold</p>
+                        <span class="spacer"></span>
+                        <button type="button" class="link" onclick="openPanel('assistant')"><span data-en="Ask something" data-pl="Zapytaj">Ask something</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
                     </div>
                 </div>
             </div>
@@ -4462,6 +4447,7 @@
             <div class="wrap">
                 <div class="section-head two">
                     <div>
+                        <span class="eyebrow" data-en="Long-term subscription" data-pl="Subskrypcja długoterminowa">Long-term subscription</span>
                         <h2 id="youth-title" class="display h2" data-en="Made for <span class='brand'>young drivers</span>" data-pl="Dobre dla <span class='brand'>młodzieży</span>">Made for <span class="brand">young drivers</span></h2>
                     </div>
                     <p class="muted" data-en="One monthly price. Insurance, tyres and service included." data-pl="Jedna miesięczna cena. Ubezpieczenie, opony i serwis w cenie.">One monthly price. Insurance, tyres and service included.</p>
@@ -4475,6 +4461,7 @@
             <div class="wrap">
                 <div class="section-head two">
                     <div>
+                        <span class="eyebrow" data-en="Priced per day" data-pl="Cena za dzień">Priced per day</span>
                         <h2 id="fun-title" class="display h2" data-en="Weekend <span class='brand'>Fun Cars</span>" data-pl="Weekendowe <span class='brand'>Fun-Cary</span>">Weekend <span class="brand">Fun Cars</span></h2>
                     </div>
                     <p class="muted" data-en="Convertibles, icons and off-roaders. Pick up Friday, hand back Monday." data-pl="Kabriolety, ikony i terenówki. Odbiór w piątek, zwrot w poniedziałek.">Convertibles, icons and off-roaders. Pick up Friday, hand back Monday.</p>
@@ -4488,6 +4475,7 @@
             <div class="wrap">
                 <div class="section-head two">
                     <div>
+                        <span class="eyebrow" data-en="Loyalty Programs" data-pl="Programy lojalnościowe">Loyalty Programs</span>
                         <h2 id="rewards-title" class="display h2" data-en="Your rental <span class='brand'>pays you back.</span>" data-pl="Twój wynajem <span class='brand'>się zwraca.</span>">Your rental <span class="brand">pays you back.</span></h2>
                     </div>
                     <div class="head-action"><button type="button" class="link" onclick="showPage('loyalty')"><span data-en="See all perks" data-pl="Zobacz wszystkie benefity">See all perks</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>
@@ -4595,25 +4583,29 @@
             <section class="year" aria-labelledby="year-title">
                 <div class="year-top">
                     <div>
-                        <h2 id="year-title" class="h2 display" data-en="What a year gets you" data-pl="Co daje Ci rok">What a year gets you</h2>
-                        <p class="muted mt-8" data-en="Move the sliders to match how you rent." data-pl="Ustaw suwaki tak, jak wynajmujesz.">Move the sliders to match how you rent.</p>
+                        <h2 id="year-title" class="h2 display" data-en="What your contract earns" data-pl="Ile zarobisz w trakcie umowy">What your contract earns</h2>
+                        <p class="muted mt-8" id="yr-intro"></p>
                         <div class="sliders">
-                            <label class="slider"><span class="row between"><span data-en="Months on a subscription" data-pl="Miesiące subskrypcji">Months on a subscription</span><b id="yr-months-v">12</b></span>
-                                <input type="range" id="yr-months" min="0" max="12" value="12" oninput="renderYear()"><small class="muted" data-en="500 points for every paid month" data-pl="500 pkt za każdy opłacony miesiąc">500 points for every paid month</small></label>
-                            <label class="slider"><span class="row between"><span data-en="Fun Car days" data-pl="Dni z Fun-Carem">Fun Car days</span><b id="yr-days-v">3</b></span>
-                                <input type="range" id="yr-days" min="0" max="20" value="3" oninput="renderYear()"><small class="muted" data-en="150 points a day" data-pl="150 pkt za dzień">150 points a day</small></label>
-                            <label class="slider"><span class="row between"><span data-en="Friends who sign a contract" data-pl="Znajomi, którzy podpiszą umowę">Friends who sign a contract</span><b id="yr-friends-v">0</b></span>
-                                <input type="range" id="yr-friends" min="0" max="5" value="0" oninput="renderYear()"><small class="muted" data-en="2,000 points each" data-pl="2 000 pkt za każdego">2,000 points each</small></label>
+                            <label class="slider"><span class="row between"><span data-en="Contract length" data-pl="Długość umowy">Contract length</span><b id="yr-months-v"></b></span>
+                                <input type="range" id="yr-months" min="3" max="60" step="3" value="36" oninput="yrTouched = true; renderYear()">
+                                <span class="row between"><small class="muted" data-en="500 points for every paid month" data-pl="500 pkt za każdy opłacony miesiąc">500 points for every paid month</small><button type="button" class="mini-link" id="yr-reset" onclick="resetYear()" hidden></button></span></label>
+                            <label class="slider"><span class="row between"><span data-en="Fun Car weekends a year" data-pl="Weekendy z Fun-Carem w roku">Fun Car weekends a year</span><b id="yr-wk-v"></b></span>
+                                <input type="range" id="yr-wk" min="0" max="4" value="1" oninput="renderYear()">
+                                <small class="muted" data-en="900 points each: 3 days × 150, +200 for returning on time, +250 for booking in the app" data-pl="900 pkt za każdy: 3 dni × 150, +200 za zwrot na czas, +250 za rezerwację w aplikacji">900 points each: 3 days × 150, +200 for returning on time, +250 for booking in the app</small></label>
+                            <label class="slider"><span class="row between"><span data-en="Friends who sign a contract" data-pl="Znajomi, którzy podpiszą umowę">Friends who sign a contract</span><b id="yr-friends-v"></b></span>
+                                <input type="range" id="yr-friends" min="0" max="3" value="0" oninput="renderYear()">
+                                <small class="muted" data-en="2,000 points each, over the whole contract" data-pl="2 000 pkt za każdego, przez całą umowę">2,000 points each, over the whole contract</small></label>
                         </div>
                     </div>
                     <div class="year-total" aria-live="polite">
-                        <span class="num" id="yr-total">6,450</span>
-                        <span class="muted" data-en="points in a year" data-pl="punktów w rok">points in a year</span>
-                        <p class="mt-16" id="yr-says"></p>
+                        <span class="num" id="yr-total"></span>
+                        <span class="muted" id="yr-total-sub"></span>
+                        <div class="yr-worth" id="yr-worth"></div>
                     </div>
                 </div>
-                <div class="scale" id="yr-scale" aria-hidden="true"></div>
-                <p class="small muted mt-24" style="max-width:720px" data-en="On top of that: 200 for every on-time return, 250 for every car booked in the app and 100 for tyres or service booked in the app. We only count what shows up in our own system, so there's nothing to self-report." data-pl="Do tego: 200 za każdy zwrot na czas, 250 za każde auto zarezerwowane w aplikacji i 100 za opony lub serwis umówione w aplikacji. Liczymy tylko to, co widać w naszym systemie — niczego nie zgłaszasz sam.">On top of that: 200 for every on-time return, 250 for every car booked in the app and 100 for tyres or service booked in the app. We only count what shows up in our own system, so there's nothing to self-report.</p>
+                <div class="timeline" id="yr-timeline" aria-hidden="true"></div>
+                <p class="yr-note" id="yr-note" aria-live="polite"></p>
+                <p class="small muted mt-24" style="max-width:760px" data-en="Only things we can see in our own system count, so there's nothing to self-report. Tyres or service booked in the app add another 100 each." data-pl="Liczą się tylko rzeczy widoczne w naszym systemie — niczego nie zgłaszasz sam. Opony lub serwis umówione w aplikacji to kolejne 100 pkt.">Only things we can see in our own system count, so there's nothing to self-report. Tyres or service booked in the app add another 100 each.</p>
             </section>
 
             <section class="status-sec" aria-labelledby="status-title">
@@ -4652,7 +4644,7 @@
                 <div class="vehicle-pick">
                     <div>
                         <label for="car-selector" class="label" data-en="Your vehicle" data-pl="Twój pojazd">Your vehicle</label>
-                        <select id="car-selector" class="field" data-dd onchange="updateRentalStats()">
+                        <select id="car-selector" class="field" data-dd onchange="updateRentalStats(); renderYear()">
                             <option value="audi">Audi Q3</option>
                             <option value="mini">Mini Cabrio</option>
                         </select>
@@ -4731,6 +4723,7 @@
                 <section id="tp-damage" class="tab-panel" role="tabpanel" aria-labelledby="tab-damage" hidden>
                     <div class="panel-title">
                         <div>
+                            <span class="eyebrow" data-en="No calls · No emails · About 60 seconds" data-pl="Bez telefonów · Bez maili · Około 60 sekund">No calls · No emails · About 60 seconds</span>
                             <h2 class="display" data-en="Report <span class='brand'>Damage</span>" data-pl="Zgłoszenie <span class='brand'>szkody</span>">Report <span class="brand">Damage</span></h2>
                         </div>
                         <button type="button" class="btn btn-line" onclick="openFullReport()"><i class="fa-regular fa-file-lines" aria-hidden="true"></i><span data-en="Make a full report" data-pl="Zrób pełne zgłoszenie">Make a full report</span></button>
@@ -5175,7 +5168,8 @@
         function appSoon() { toast(t('The VOLTA app is coming soon.', 'Aplikacja VOLTA już wkrótce.'), 'fa-mobile-screen'); }
         function updateNav() {
             const nav = document.getElementById('nav');
-            const onHero = currentPage === 'home' && window.scrollY < window.innerHeight - 120 && document.getElementById('mobile-menu').hidden;
+            // Transparent only while the hero search is still under the bar; black as soon as it scrolls past.
+            const onHero = currentPage === 'home' && document.getElementById('search').getBoundingClientRect().bottom > nav.offsetHeight && document.getElementById('mobile-menu').hidden;
             nav.classList.toggle('on-hero', onHero);
         }
         window.addEventListener('scroll', updateNav, { passive: true });
@@ -5447,25 +5441,70 @@
                 </article>`).join('');
             renderYear();
         }
+
+        // ============ LOYALTY CALCULATOR ============
+        // Starts from the customer's real contract; everything is counted from events VOLTA records itself.
+        const WEEKEND_PTS = 3 * 150 + 200 + 250;              // 3 Fun Car days + on-time return + booked in the app
+        const contractMonths = r => Math.max(3, Math.round((r.used + r.left) / 30.4375 / 3) * 3);
+        let yrTouched = false;
+        const yrLen = m => {
+            const y = m / 12, yTxt = Number.isInteger(y) ? String(y) : y.toLocaleString(locale(), { maximumFractionDigits: 2 });
+            const plYears = Number.isInteger(y) ? (y === 1 ? 'rok' : (y % 10 >= 2 && y % 10 <= 4 && (y % 100 < 12 || y % 100 > 14)) ? 'lata' : 'lat') : 'roku';
+            return m < 12 ? t(`${m} months`, `${m} mies.`) : t(`${m} months · ${yTxt} year${y === 1 ? '' : 's'}`, `${m} mies. · ${yTxt} ${plYears}`);
+        };
+        function resetYear() { yrTouched = false; renderYear(); }
         function renderYear() {
-            const v = id => +document.getElementById(id).value;
-            const m = v('yr-months'), d = v('yr-days'), f = v('yr-friends');
-            ['months', 'days', 'friends'].forEach(k => { const el = document.getElementById('yr-' + k); document.getElementById(`yr-${k}-v`).textContent = el.value; el.style.setProperty('--p', (el.value / el.max * 100) + '%'); });
-            const total = m * 500 + d * 150 + f * 2000;
-            document.getElementById('yr-total').textContent = fmt(total);
-            const name = r => tx([r.en, r.pl])[0], lower = x => x.charAt(0).toLowerCase() + x.slice(1);
-            const best = [...REDEEM].reverse().find(r => total >= r.cost), next = REDEEM.find(r => total < r.cost);
-            const tier = total >= 20000 ? 'Elite' : total >= 5000 ? 'Plus' : 'Start';
-            let msg = best ? t(`Enough for: <b>${lower(name(best))}</b>.`, `Wystarczy na: <b>${lower(name(best))}</b>.`) : t('Not enough for a reward yet.', 'Jeszcze za mało na nagrodę.');
-            if (next) msg += ' ' + t(`${fmt(next.cost - total)} more for ${lower(name(next))}.`, `Brakuje ${fmt(next.cost - total)} do: ${lower(name(next))}.`);
-            msg += '<br>' + t(`Status after a year: <b>${tier}</b>.`, `Status po roku: <b>${tier}</b>.`);
-            document.getElementById('yr-says').innerHTML = msg;
-            // Evenly spaced milestones (piecewise scale) so the labels never collide on a phone.
-            const stops = [0, ...REDEEM.map(r => r.cost)], seg = 100 / (stops.length - 1);
-            let pos = 100;
-            for (let i = 1; i < stops.length; i++) if (total < stops[i]) { pos = (i - 1 + (total - stops[i - 1]) / (stops[i] - stops[i - 1])) * seg; break; }
-            document.getElementById('yr-scale').innerHTML = `<div class="scale-track"><span style="width:${pos}%"></span></div>` +
-                REDEEM.map((r, i) => `<div class="scale-stop${total >= r.cost ? ' on' : ''}" style="left:${(i + 1) * seg}%"><i></i><b>${fmt(r.cost)}</b><span>${name(r)}</span></div>`).join('');
+            const el = id => document.getElementById(id), r = curRental(), mine = contractMonths(r);
+            if (!yrTouched) el('yr-months').value = mine;
+            const M = +el('yr-months').value, W = +el('yr-wk').value, F = +el('yr-friends').value;
+            ['yr-months', 'yr-wk', 'yr-friends'].forEach(id => { const i = el(id); i.style.setProperty('--p', ((i.value - i.min) / (i.max - i.min) * 100) + '%'); });
+            el('yr-months-v').textContent = yrLen(M);
+            el('yr-wk-v').textContent = W;
+            el('yr-friends-v').textContent = F;
+            const mo = { month: currentLang === 'pl' ? '2-digit' : 'short', year: 'numeric' };
+            el('yr-intro').textContent = t(`Your ${r.model} contract runs ${mine} months, ${fmtDate(contractStart(r), mo)} to ${fmtDate(contractEnd(r), mo)}. Change it to compare a shorter or longer one.`,
+                `Twoja umowa na ${r.model} trwa ${mine} mies., od ${fmtDate(contractStart(r), mo)} do ${fmtDate(contractEnd(r), mo)}. Zmień ją, aby porównać krótszą lub dłuższą.`);
+            const reset = el('yr-reset'); reset.hidden = M === mine; reset.textContent = t(`Back to my ${mine} months`, `Wróć do moich ${mine} mies.`);
+
+            const weekends = Math.floor(W * M / 12);           // only whole weekends that fit into the contract
+            const total = M * 500 + weekends * WEEKEND_PTS + F * 2000;
+            el('yr-total').textContent = fmt(total);
+            el('yr-total-sub').textContent = t(`points over ${M} months`, `punktów w ${M} mies.`);
+
+            // What it is worth: the simplest (all invoice discounts) and the most fun (biggest rewards first).
+            const inv = REDEEM.find(x => x.id === 'invoice'), day = REDEEM.find(x => x.id === 'day'), wkd = REDEEM.find(x => x.id === 'weekend');
+            const nInv = Math.floor(total / inv.cost);
+            let rest = total; const nW = Math.floor(rest / wkd.cost); rest -= nW * wkd.cost;
+            const nD = Math.floor(rest / day.cost); rest -= nD * day.cost; const nI = Math.floor(rest / inv.cost);
+            const parts = [];
+            if (nW) parts.push(t(`${nW} free Fun Car weekend${nW > 1 ? 's' : ''}`, `${nW} ${nW > 1 ? 'darmowe weekendy' : 'darmowy weekend'} Fun-Carem`));
+            if (nD) parts.push(t(`${nD} free Fun Car day${nD > 1 ? 's' : ''}`, `${nD} ${nD > 1 ? 'darmowe dni' : 'darmowy dzień'} Fun-Carem`));
+            if (nI) parts.push(t(`${fmt(nI * 300)} PLN off invoices`, `${fmt(nI * 300)} PLN rabatu na faktury`));
+            el('yr-worth').innerHTML = nInv
+                ? `<p>${t('Worth up to', 'Warte do')} <b>${fmt(nInv * 300)} PLN</b> ${t('off your invoices', 'rabatu na faktury')}</p>` +
+                  (nW || nD ? `<p class="muted">${t('or', 'albo')} ${parts.length > 1 ? parts.slice(0, -1).join(', ') + t(' and ', ' i ') + parts[parts.length - 1] : parts[0]}</p>` : '')
+                : `<p class="muted">${t(`${fmt(inv.cost - total)} more points for your first 300 PLN off.`, `Jeszcze ${fmt(inv.cost - total)} pkt do pierwszych 300 PLN rabatu.`)}</p>`;
+
+            // Timeline: points month by month. Weekends land as they happen; referrals are spread across the contract.
+            const signMonth = i => Math.ceil(i * M / (F + 1));
+            const ptsAt = m => m * 500 + Math.floor(W * m / 12) * WEEKEND_PTS + [...Array(F)].filter((_, i) => signMonth(i + 1) <= m).length * 2000;
+            const when = goal => { for (let m = 1; m <= 240; m++) if (ptsAt(m) >= goal) return m; return Infinity; };
+            const plus = when(5000), elite = when(20000);
+            const years = Math.floor(M / 12);
+            let html = `<div class="tl-track"><span></span></div>`;
+            for (let y = 1; y <= years; y++) if (y * 12 < M) html += `<div class="tl-tick" style="left:${y * 12 / M * 100}%"><span>${t('Year', 'Rok')} ${y + 1}</span></div>`;
+            html += `<div class="tl-end tl-start">${t('Start', 'Start')}</div><div class="tl-end">${t(`Month ${M}`, `Miesiąc ${M}`)}</div>`;
+            const close = elite <= M && (elite - plus) / M < 0.22;
+            [[plus, 'Plus'], [elite, 'Elite']].forEach(([m, name], k) => {
+                if (m > M) return;
+                const pos = m / M * 100, side = pos < 10 ? ' l' : pos > 90 ? ' r' : close ? (k ? ' l' : ' r') : '';
+                html += `<div class="tl-mark${side}" style="left:${pos}%"><i></i><b>${name}</b><span>${t(`month ${m}`, `miesiąc ${m}`)}</span></div>`;
+            });
+            el('yr-timeline').innerHTML = html;
+            const note = elite > M ? (plus > M ? t(`Plus would take ${plus} months, longer than this contract.`, `Plus zajęłoby ${plus} mies. — dłużej niż ta umowa.`)
+                : t(`Elite would take ${elite} months if you kept renting like this. More Fun Car weekends or a referral gets you there sooner.`, `Elite zajęłoby ${elite} mies., gdybyś dalej wynajmował w ten sposób. Więcej weekendów z Fun-Carem albo polecenie skrócą ten czas.`))
+                : t(`You'd reach Elite in month ${elite}, and keep it: spending points never lowers your status.`, `Elite osiągniesz w ${elite}. miesiącu i go zachowasz — wydawanie punktów nie obniża statusu.`);
+            const n = el('yr-note'); if (n) n.textContent = note;
         }
         function connectPartner(id) {
             const p = PARTNERS.find(x => x.id === id); linked.add(id);
